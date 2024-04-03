@@ -12,10 +12,21 @@ import {
 	SubmitHandler,
 	SubmitErrorHandler,
 } from "react-hook-form";
-import { Friend, FriendType, ContactMethod } from "@/components/classes/friend";
+import {
+	Friend,
+	FriendType,
+	ContactMethod,
+	contactMethods,
+} from "@/components/classes/friend";
 import Colors from "@/constants/Colors";
 
-import { formStyles, TextInput, Dropdown, DatePicker } from "@/components/form";
+import {
+	formStyles,
+	TextInput,
+	Dropdown,
+	DatePicker,
+	ScrollWheel,
+} from "@/components/form";
 import { Text } from "@/components/Themed";
 import { useFriendStore } from "@/components/classes/friendStore";
 import { useRouter } from "expo-router";
@@ -23,8 +34,9 @@ import { useRouter } from "expo-router";
 interface FormData {
 	name: string;
 	type: FriendType;
-	method: ContactMethod;
-	// frequency: number;
+	method: number;
+	freq1: number;
+	freq2: string;
 	lastContacted: Date;
 }
 
@@ -35,7 +47,12 @@ const NewFriend = () => {
 	const { ...methods } = useForm<FormData>();
 
 	const onSubmit: SubmitHandler<FormData> = (data) => {
-		const friend = new Friend(data.name, data.type, new Date(), "", data.method);
+		const friend = new Friend(
+			data.name,
+			data.type,
+			new Date(data.lastContacted),
+			contactMethods[data.method]
+		);
 		addFriend(friend);
 		router.back();
 		console.log(data);
@@ -46,43 +63,61 @@ const NewFriend = () => {
 			<View>
 				<Text style={styles.title}>Add New Friend</Text>
 				<FormProvider {...methods}>
-					<TextInput
-						defaultValue={""}
-						name='name'
-						label='Name'
-						error={methods.formState.errors.name}
-						rules={{ required: "Name is required" }}
-					/>
-					<Dropdown
-						name='type'
-						label='Friend Type'
-						error={methods.formState.errors.type}
-						rules={{ required: "Friend Type is required" }}
-						data={[
-							{ label: "Friend", value: FriendType.Friend },
-							{ label: "Acquaintance", value: FriendType.Acquaintance },
-							{ label: "Family", value: FriendType.Family },
-							{ label: "Work", value: FriendType.Work },
-							{ label: "Other", value: FriendType.Other },
-						]}
-					/>
-					<Dropdown
-						name='method'
-						label='Contact Method'
-						error={methods.formState.errors.method}
-						rules={{ required: "Contact Method is required" }}
-						data={[
-							{ label: "Phone", value: ContactMethod.Phone },
-							{ label: "Email", value: ContactMethod.Email },
-							{ label: "Text", value: ContactMethod.Text },
-						]}
-					/>
-					<DatePicker
-						name='lastContacted'
-						label='Last Contacted'
-						error={methods.formState.errors.lastContacted}
-						rules={{ required: "Last Contacted is required" }}
-					/>
+					<>
+						<TextInput
+							defaultValue={""}
+							name='name'
+							label='Name'
+							error={methods.formState.errors.name}
+							rules={{ required: "Name is required" }}
+						/>
+						<Dropdown
+							name='type'
+							label='Friend Type'
+							error={methods.formState.errors.type}
+							rules={{ required: "Friend Type is required" }}
+							data={[
+								{ label: "Friend", value: FriendType.Friend },
+								{ label: "Acquaintance", value: FriendType.Acquaintance },
+								{ label: "Family", value: FriendType.Family },
+								{ label: "Work", value: FriendType.Work },
+								{ label: "Other", value: FriendType.Other },
+							]}
+						/>
+						<Dropdown
+							name='method'
+							label='Contact Method'
+							error={methods.formState.errors.method}
+							rules={{ required: "Contact Method is required" }}
+							data={contactMethods.map((method) => ({
+								label: method.name,
+								icon: method.icon,
+								value: method.id,
+							}))}
+						/>
+						<DatePicker
+							name='lastContacted'
+							label='Last Contacted'
+							error={methods.formState.errors.lastContacted}
+							rules={{ required: "Last Contacted is required" }}
+						/>
+						<View style={{ display: "flex" }}>
+							{/* <ScrollWheel
+								name='freq1'
+								label='Frequency'
+								error={methods.formState.errors.freq1}
+								rules={{ required: "Frequency is required" }}
+								data={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
+							/> */}
+							<ScrollWheel
+								name='freq2'
+								label='Frequency'
+								error={methods.formState.errors.freq2}
+								rules={{ required: "Frequency is required" }}
+								data={["day", "week", "month", "year"]}
+							/>
+						</View>
+					</>
 				</FormProvider>
 				<Pressable
 					onPress={methods.handleSubmit(onSubmit)}

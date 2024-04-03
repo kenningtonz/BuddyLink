@@ -9,11 +9,13 @@ import { useFriendStore } from "@/components/classes/friendStore";
 import styles from "@/components/styles";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack } from "expo-router";
+import { Button } from "@/components/Button";
+
 export default function Friends() {
 	const friendsList = useFriendStore((state) => state.friends);
 
 	return (
-		<SafeAreaView>
+		<SafeAreaView style={{ height: "100%" }}>
 			<Stack.Screen
 				options={{
 					title: "Friends",
@@ -24,13 +26,7 @@ export default function Friends() {
 			<View style={{ height: "100%", padding: 10 }}>
 				{/* <Text style={styles.title}>Friends</Text> */}
 				<Link href={"/(modals)/newFriend"} asChild>
-					<Pressable
-						// sizePressable={"icon"}
-						style={styles.button}
-						// style={({ pressed }) => (pressed ? styles.buttonDown : styles.button)}
-					>
-						<Text style={styles.buttonText}>New Friend</Text>
-					</Pressable>
+					<Button text='Add Friend' />
 				</Link>
 				<FlatList
 					style={styles.list}

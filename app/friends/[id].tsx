@@ -5,14 +5,9 @@ import { useFriendStore } from "@/components/classes/friendStore";
 
 import { Stack } from "expo-router";
 
-import {
-	Text,
-	TextInput,
-	Button,
-	StyleSheet,
-	SafeAreaView,
-} from "react-native";
+import { Text, TextInput, StyleSheet, SafeAreaView } from "react-native";
 import { View } from "@/components/Themed";
+import { Button } from "@/components/Button";
 
 const Friend = () => {
 	const { id } = useLocalSearchParams<{ id: string }>();
@@ -30,22 +25,29 @@ const Friend = () => {
 		);
 	}
 	return (
-		<SafeAreaView>
+		<SafeAreaView style={{ height: "100%" }}>
 			<Stack.Screen
 				options={{
 					title: friend.name,
 					headerTitleStyle: { fontFamily: "Fredoka" },
 				}}
 			/>
-			<View>
+			<View style={styles.container}>
 				<Text style={styles.title}>Friend</Text>
 				<Text>id: {id}</Text>
 				<Text>name: {friend.name}</Text>
 				<Text>type: {friend.type}</Text>
-				<Text>method: {friend.method}</Text>
-				<Text>frequency: {friend.frequency}</Text>
-				{/* <Text>lastContacted: {friend.lastContacted}</Text> */}
-				<Button title='Edit' onPress={() => console.log("Edit")} />
+				<Text>method: {friend.method?.name}</Text>
+				{/* <Text>frequency: {friend.frequency}</Text> */}
+				<Text>
+					lastContacted:{" "}
+					{friend.lastContacted?.toLocaleDateString("en-CA", {
+						month: "long",
+						year: "numeric",
+						day: "numeric",
+					})}
+				</Text>
+				<Button onPress={() => console.log("Edit")} text='edit' />
 			</View>
 		</SafeAreaView>
 	);
@@ -54,8 +56,7 @@ const Friend = () => {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		alignItems: "center",
-		justifyContent: "center",
+		padding: 20,
 	},
 	title: {
 		fontSize: 20,

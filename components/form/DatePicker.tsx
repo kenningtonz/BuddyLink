@@ -32,7 +32,9 @@ export default React.forwardRef<any, Props>(
 					<Text style={formStyles.label}>{label}</Text>
 					<Pressable onPress={() => setOpen(!open)}>
 						<Text style={formStyles.input}>
-							{field.value ? field.value.toString() : "Select Date"}
+							{field.value
+								? dayjs(field.value).format("DD MMMM, YYYY")
+								: "Select Date"}
 						</Text>
 					</Pressable>
 
@@ -67,6 +69,7 @@ export default React.forwardRef<any, Props>(
 									maxDate={new Date()}
 									onChange={(params) => {
 										field.onChange(params.date);
+										console.log(new Date(params.date as string));
 										setOpen(false);
 									}}
 									date={field.value}

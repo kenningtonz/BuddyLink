@@ -1,12 +1,12 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 enum FriendType {
-	Acquaintance,
-	Friend,
-	BestFriend,
-	Family,
-	Work,
-	Other,
+	Acquaintance = "Acquaintance",
+	Friend = "Friend",
+	BestFriend = "Best Friend",
+	Family = "Family",
+	Work = "Work",
+	Other = "Other",
 }
 
 // type FriendType = {
@@ -18,22 +18,36 @@ enum FriendType {
 // 	nickname?: string;
 
 // }
+import { FontAwesome } from "@expo/vector-icons";
 
-// type ContactMethod = {
-// 	name: string;
-// 	icon : string;
-// }
-
-enum ContactMethod {
-	Phone,
-	Text,
-	Email,
-	Discord,
-	WhatsApp,
-	Instagram,
-	Facebook,
-	Other,
+interface ContactMethod {
+	name: string;
+	id: number;
+	icon: keyof typeof FontAwesome.glyphMap;
+	// icon: string;
 }
+
+const contactMethods: ContactMethod[] = [
+	{ name: "Phone", icon: "phone", id: 0 },
+	{ name: "Text", icon: "comment", id: 1 },
+	{ name: "Email", icon: "envelope", id: 2 },
+	// { name: "Discord", icon: "discord" },
+	{ name: "WhatsApp", icon: "whatsapp", id: 3 },
+	{ name: "Instagram", icon: "instagram", id: 4 },
+	{ name: "Facebook", icon: "facebook", id: 5 },
+	{ name: "Other", icon: "ellipsis-h", id: 6 },
+];
+
+// enum ContactMethod {
+// 	Phone,
+// 	Text,
+// 	Email,
+// 	Discord,
+// 	WhatsApp,
+// 	Instagram,
+// 	Facebook,
+// 	Other,
+// }
 
 class Friend {
 	name: string;
@@ -41,15 +55,15 @@ class Friend {
 	id: number;
 	img?: string;
 	type: FriendType;
-	method?: ContactMethod;
+	method: ContactMethod;
 	frequency?: string;
 	lastContacted?: Date;
 	constructor(
 		name: string,
 		type: FriendType,
-		lastContacted?: Date,
+		lastContacted: Date,
+		method: ContactMethod,
 		img?: string,
-		method?: ContactMethod,
 		frequency?: string,
 		nickname?: string
 	) {
@@ -89,4 +103,4 @@ class Friend {
 // 	}
 // }
 
-export { Friend, FriendType, ContactMethod };
+export { Friend, FriendType, ContactMethod, contactMethods };
