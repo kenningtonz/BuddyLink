@@ -1,18 +1,28 @@
 import { create } from "zustand";
-import { Friend } from "@/components/classes/friend";
+import { Friend } from "@/classes/friend";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface FriendState {
 	friends: Friend[];
 	addFriend: (friend: Friend) => void;
-	removeFriend: (id: number) => void;
+	removeFriend: (id: string) => void;
+	editFriend: (friend: Friend) => void;
 }
 
 const useFriendStore = create<FriendState>()((set) => ({
 	friends: [],
+	editFriend: (friend: Friend) =>
+		set((state) => ({
+			friends: state.friends.map((f) => {
+				if (f.id === friend.id) {
+					return friend;
+				}
+				return f;
+			}),
+		})),
 	addFriend: (friend) =>
 		set((state) => ({ friends: [...state.friends, friend] })),
-	removeFriend: (id) =>
+	removeFriend: (id: string) =>
 		set((state) => ({
 			friends: state.friends.filter((friend) => friend.id !== id),
 		})),

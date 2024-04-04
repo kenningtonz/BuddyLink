@@ -1,30 +1,48 @@
-import { StyleSheet } from "react-native";
+import { View as Column, FlatList, Pressable } from "react-native";
 
-import { Text, View } from "@/components/Themed";
+import { Text, Layout } from "@/components/Themed";
 import { Link } from "expo-router";
+import { Friend } from "@/classes/friend";
 
-export default function Home() {
+import { useFriendStore } from "@/classes/friendStore";
+import baseStyles from "@/components/styles";
+
+import { Stack } from "expo-router";
+import { Button, ButtonVariants } from "@/components/Button";
+
+export default function Friends() {
+	const friendsList = useFriendStore((state) => state.friends);
+
 	return (
-		<View style={styles.container}>
-			<Text style={styles.title}>Home</Text>
-			<Link href={"/(modals)/login"}>Login</Link>
-		</View>
+		<>
+			<Stack.Screen
+				options={{
+					title: "Welcome to BuddyLink",
+					headerTitleStyle: { fontFamily: "Fredoka" },
+				}}
+			/>
+			<Layout>
+				{/* <Text style={styles.title}>Friends</Text> */}
+				<Link href={"/(modals)/newFriend"} asChild>
+					<Button variant={ButtonVariants.Primary} text='Add Friend' />
+				</Link>
+				<FlatList
+					style={baseStyles.list}
+					data={friendsList}
+					keyExtractor={(item) => item.name}
+					renderItem={({ item }) => <FriendItem friend={item} />}
+				/>
+			</Layout>
+		</>
 	);
 }
 
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		alignItems: "center",
-		justifyContent: "center",
-	},
-	title: {
-		fontSize: 20,
-		fontWeight: "bold",
-	},
-	separator: {
-		marginVertical: 30,
-		height: 1,
-		width: "80%",
-	},
-});
+const FriendItem = ({ friend }: { friend: Friend }) => {
+	return (
+		<Column>
+			<Link href={`/friends/${friend.id}`} style={baseStyles.item}>
+				<Text>{friend.name}</Text>
+			</Link>
+		</Column>
+	);
+};

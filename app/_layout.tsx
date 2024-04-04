@@ -11,6 +11,9 @@ import { useEffect } from "react";
 import { Pressable, TouchableOpacity } from "react-native";
 import { Stack, useRouter } from "expo-router";
 import { useColorScheme } from "@/components/useColorScheme";
+import { useUserStore } from "@/classes/userStore";
+import { Session } from "@supabase/supabase-js";
+import { supabase } from "@/utils/supabase";
 
 export {
 	// Catch any errors thrown by the Layout component.
@@ -26,6 +29,19 @@ export const unstable_settings = {
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+	// const currentSession = useUserStore((state) => state.session)
+	const setSession = useUserStore((state) => state.setSession);
+	const user = useUserStore((state) => state.user);
+
+	useEffect(() => {
+		supabase.auth.getSession().then(({ data: { session } }) => {
+			setSession(session);
+		});
+		supabase.auth.onAuthStateChange((_event, session) => {
+			setSession(session);
+		});
+	}, []);
+
 	const [loaded, error] = useFonts({
 		Fredoka: require("@/assets/fonts/Fredoka-Regular.ttf"),
 		"Fredoka-Bold": require("@/assets/fonts/Fredoka-Bold.ttf"),
@@ -62,7 +78,6 @@ function RootLayoutNav() {
 		<ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
 			<Stack>
 				<Stack.Screen name='(tabs)' options={{ headerShown: false }} />
-				<Stack.Screen name='modal' options={{ presentation: "modal" }} />
 				<Stack.Screen name='friends/[id]' options={{}} />
 				<Stack.Screen
 					name='(modals)/login'
@@ -90,6 +105,19 @@ function RootLayoutNav() {
 						),
 					}}
 				/>
+				{/* <Stack.Screen
+					name='(modals)/reminders'
+					options={{
+						presentation: "modal",
+						title: "Reminders",
+						headerTitleStyle: { fontFamily: "Fredoka" },
+						headerLeft: () => (
+							<Pressable onPress={() => router.back()}>
+								<FontAwesome name='close' size={25} />
+							</Pressable>
+						),
+					}}
+				/> */}
 			</Stack>
 		</ThemeProvider>
 	);

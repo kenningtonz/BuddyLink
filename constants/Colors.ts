@@ -13,6 +13,7 @@ export default {
 		secondary: "#c3dc0a",
 		secondaryDark: "#708308",
 		secondaryText: "#273102",
+		error: "#661B26",
 	},
 
 	dark: {
@@ -26,5 +27,6 @@ export default {
 		secondary: "#c3dc0a",
 		secondaryLight: "#708308",
 		secondaryWhite: "#273102",
+		error: "#D87B6C",
 	},
 };

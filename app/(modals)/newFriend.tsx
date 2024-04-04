@@ -1,10 +1,5 @@
-import {
-	StyleSheet,
-	View,
-	SafeAreaView,
-	Button,
-	Pressable,
-} from "react-native";
+import { SafeAreaView } from "react-native";
+
 import React, { useState } from "react";
 import {
 	FormProvider,
@@ -17,19 +12,16 @@ import {
 	FriendType,
 	ContactMethod,
 	contactMethods,
-} from "@/components/classes/friend";
-import Colors from "@/constants/Colors";
+	Frequency,
+} from "@/classes/friend";
+import { generateID } from "@/utils/generateID";
 
-import {
-	formStyles,
-	TextInput,
-	Dropdown,
-	DatePicker,
-	ScrollWheel,
-} from "@/components/form";
-import { Text } from "@/components/Themed";
-import { useFriendStore } from "@/components/classes/friendStore";
+import { Text, Layout } from "@/components/Themed";
+import { useFriendStore } from "@/classes/friendStore";
 import { useRouter } from "expo-router";
+import FriendForm from "@/components/form/FriendForm";
+
+import baseStyles from "@/components/styles";
 
 interface FormData {
 	name: string;
@@ -37,6 +29,7 @@ interface FormData {
 	method: number;
 	freq1: number;
 	freq2: string;
+	img: string;
 	lastContacted: Date;
 }
 
@@ -44,125 +37,40 @@ const NewFriend = () => {
 	const addFriend = useFriendStore((state) => state.addFriend);
 	const router = useRouter();
 
-	const { ...methods } = useForm<FormData>();
-
 	const onSubmit: SubmitHandler<FormData> = (data) => {
-		const friend = new Friend(
-			data.name,
-			data.type,
-			new Date(data.lastContacted),
-			contactMethods[data.method]
-		);
+		const friend = {
+			name: data.name,
+			type: data.type,
+			method: contactMethods[data.method],
+			freq1: data.freq1,
+			freq2: data.freq2,
+			img: data.img,
+			lastContacted: new Date(data.lastContacted),
+			id: generateID(),
+		};
 		addFriend(friend);
 		router.back();
 		console.log(data);
 	};
 
 	return (
-		<SafeAreaView style={styles.container}>
-			<View>
-				<Text style={styles.title}>Add New Friend</Text>
-				<FormProvider {...methods}>
-					<>
-						<TextInput
-							defaultValue={""}
-							name='name'
-							label='Name'
-							error={methods.formState.errors.name}
-							rules={{ required: "Name is required" }}
-						/>
-						<Dropdown
-							name='type'
-							label='Friend Type'
-							error={methods.formState.errors.type}
-							rules={{ required: "Friend Type is required" }}
-							data={[
-								{ label: "Friend", value: FriendType.Friend },
-								{ label: "Acquaintance", value: FriendType.Acquaintance },
-								{ label: "Family", value: FriendType.Family },
-								{ label: "Work", value: FriendType.Work },
-								{ label: "Other", value: FriendType.Other },
-							]}
-						/>
-						<Dropdown
-							name='method'
-							label='Contact Method'
-							error={methods.formState.errors.method}
-							rules={{ required: "Contact Method is required" }}
-							data={contactMethods.map((method) => ({
-								label: method.name,
-								icon: method.icon,
-								value: method.id,
-							}))}
-						/>
-						<DatePicker
-							name='lastContacted'
-							label='Last Contacted'
-							error={methods.formState.errors.lastContacted}
-							rules={{ required: "Last Contacted is required" }}
-						/>
-						<View style={{ display: "flex" }}>
-							{/* <ScrollWheel
-								name='freq1'
-								label='Frequency'
-								error={methods.formState.errors.freq1}
-								rules={{ required: "Frequency is required" }}
-								data={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
-							/> */}
-							<ScrollWheel
-								name='freq2'
-								label='Frequency'
-								error={methods.formState.errors.freq2}
-								rules={{ required: "Frequency is required" }}
-								data={["day", "week", "month", "year"]}
-							/>
-						</View>
-					</>
-				</FormProvider>
-				<Pressable
-					onPress={methods.handleSubmit(onSubmit)}
-					style={formStyles.button}
-				>
-					<Text>Submit</Text>
-				</Pressable>
-			</View>
-		</SafeAreaView>
+		<Layout>
+			<Text style={baseStyles.title}>Add New Friend</Text>
+			<FriendForm
+				onSubmit={onSubmit}
+				buttonText='Add Friend'
+				defaultValues={{
+					img: "/assets/images/placeholder.png",
+					name: "",
+					type: FriendType.Friend,
+					method: 0,
+					freq1: 1,
+					freq2: "day",
+					lastContacted: new Date(),
+				}}
+			/>
+		</Layout>
 	);
 };
 
 export default NewFriend;
-
-const styles = StyleSheet.create({
-	title: {
-		fontSize: 20,
-		textAlign: "center",
-		fontWeight: "bold",
-		fontFamily: "Fredoka",
-	},
-	errorText: {
-		color: "red",
-	},
-	container: {
-		flex: 1,
-		backgroundColor: Colors.light.primaryLight,
-		padding: 20,
-		// gap: 20,
-		// alignItems: "center",
-		// justifyContent: "center",
-	},
-	label: {
-		fontSize: 15,
-		fontFamily: "Fredoka",
-		fontWeight: "bold",
-	},
-	input: {
-		borderWidth: 1,
-		backgroundColor: "white",
-		borderColor: "black",
-		padding: 8,
-		borderRadius: 8,
-		height: 30,
-		marginBottom: 10,
-		fontFamily: "Fredoka",
-	},
-});

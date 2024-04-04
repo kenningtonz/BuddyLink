@@ -12,6 +12,7 @@ interface Props {
 	label?: string;
 	error?: FieldError | undefined;
 	rules?: any;
+	customStyle?: any;
 	data: {
 		label: string;
 		value: any;
@@ -22,14 +23,16 @@ interface Props {
 // https://www.npmjs.com/package/react-native-element-dropdown
 export default React.forwardRef<any, Props>(
 	(props, ref): React.ReactElement => {
-		const { label, rules, name, error, data, ...dropdownProps } = props;
+		const { label, rules, name, error, data, customStyle, ...dropdownProps } =
+			props;
 		const formContext = useFormContext();
 		const { formState } = formContext;
 		const { field } = useController({ name, rules });
+		const [isFocused, setIsFocused] = React.useState(false);
 
 		const getSelectedIcon = (value: any) => {
 			const item = data.find((item) => item.value == value);
-			return item ? item.icon : "question";
+			return item ? item.icon : "chevron-down";
 		};
 
 		return (
@@ -47,20 +50,38 @@ export default React.forwardRef<any, Props>(
 					labelField='label'
 					valueField='value'
 					data={data}
-					renderRightIcon={() => (
-						<FontAwesome
-							name={getSelectedIcon(field.value)}
-							size={20}
-							color={Colors.light.primary}
-						/>
-					)}
+					renderRightIcon={() => {
+						if (data[0].icon) {
+							return (
+								<FontAwesome
+									name={getSelectedIcon(field.value)}
+									size={20}
+									color={Colors.light.primary}
+								/>
+							);
+						} else {
+							<FontAwesome
+								name={"chevron-down"}
+								size={20}
+								color={Colors.light.primary}
+							/>;
+						}
+					}}
 					onChange={(item) => {
 						field.onChange(item.value);
 						console.log(item.value);
 					}}
+					onFocus={() => setIsFocused(true)}
 					value={field.value}
-					onBlur={field.onBlur}
-					style={[formStyles.input]}
+					onBlur={() => {
+						field.onBlur();
+						setIsFocused(false);
+					}}
+					style={[
+						formStyles.input,
+						isFocused ? formStyles.inputFocused : {},
+						customStyle ?? {},
+					]}
 					{...dropdownProps}
 				/>
 				{error && <Text style={formStyles.errorText}>{error.message}</Text>}

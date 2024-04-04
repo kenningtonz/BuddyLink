@@ -2,6 +2,7 @@ import DateTimePicker from "react-native-ui-datepicker";
 import { useController, useFormContext, FieldError } from "react-hook-form";
 import { Text } from "../Themed";
 import dayjs from "dayjs";
+import Dialog from "../Dialog";
 
 import { Pressable, View, Modal } from "react-native";
 import formStyles from "./styles";
@@ -41,43 +42,21 @@ export default React.forwardRef<any, Props>(
 					{error && <Text style={formStyles.errorText}>{error.message}</Text>}
 				</View>
 				{open ? (
-					<View style={formStyles.centeredView}>
-						<Modal
-							transparent={true}
-							visible={open}
-							style={formStyles.calenderContainer}
-							onRequestClose={() => {
+					<Dialog open={open} setOpen={setOpen}>
+						<DateTimePicker
+							mode='single'
+							calendarTextStyle={{ fontFamily: "Fredoka" }}
+							selectedItemColor={Colors.light.primary}
+							maxDate={new Date()}
+							onChange={(params) => {
+								field.onChange(params.date);
+								console.log(new Date(params.date as string));
 								setOpen(false);
 							}}
-						>
-							<Pressable
-								onPressOut={() => setOpen(false)}
-								style={formStyles.modalOverlay}
-							/>
-							<View style={formStyles.calenderContainer}>
-								<FontAwesome
-									name='close'
-									size={25}
-									color={Colors.light.primaryDark}
-									style={formStyles.closeIcon}
-									onPress={() => setOpen(false)}
-								/>
-								<DateTimePicker
-									mode='single'
-									calendarTextStyle={{ fontFamily: "Fredoka" }}
-									selectedItemColor={Colors.light.primary}
-									maxDate={new Date()}
-									onChange={(params) => {
-										field.onChange(params.date);
-										console.log(new Date(params.date as string));
-										setOpen(false);
-									}}
-									date={field.value}
-									{...dropdownProps}
-								/>
-							</View>
-						</Modal>
-					</View>
+							date={field.value}
+							{...dropdownProps}
+						/>
+					</Dialog>
 				) : null}
 			</>
 		);

@@ -1,30 +1,12 @@
-import { StyleSheet } from "react-native";
-
-import { Text, View } from "@/components/Themed";
+import { Text, Layout } from "@/components/Themed";
 import { Link } from "expo-router";
+import baseStyles from "@/components/styles";
 
-export default function Home() {
+export default function Settings() {
 	return (
-		<View style={styles.container}>
-			<Text style={styles.title}>Home</Text>
+		<Layout>
+			<Text style={baseStyles.title}>Settings</Text>
 			<Link href={"/(modals)/login"}>Login</Link>
-		</View>
+		</Layout>
 	);
 }
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		alignItems: "center",
-		justifyContent: "center",
-	},
-	title: {
-		fontSize: 20,
-		fontWeight: "bold",
-	},
-	separator: {
-		marginVertical: 30,
-		height: 1,
-		width: "80%",
-	},
-});

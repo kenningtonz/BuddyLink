@@ -30,31 +30,33 @@ export default function TabLayout() {
 			<Tabs.Screen
 				name='index'
 				options={{
-					title: "Home",
-					tabBarIcon: ({ color }) => <TabBarIcon name='home' color={color} />,
-					headerRight: () => (
-						<Link href='/modal' asChild>
-							<Pressable>
-								{({ pressed }) => (
-									<FontAwesome
-										name='info-circle'
-										size={25}
-										color={Colors[colorScheme ?? "light"].primaryText}
-										style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-									/>
-								)}
-							</Pressable>
-						</Link>
-					),
+					title: "Welcome",
+					tabBarIcon: ({ color }) => <TabBarIcon name='users' color={color} />,
+					tabBarLabel: "Home",
+					// headerRight: () => (
+					// 	<Link href='/(modals)/reminders' asChild>
+					// 		<Pressable>
+					// 			{({ pressed }) => (
+					// 				<FontAwesome
+					// 					name='bell'
+					// 					size={25}
+					// 					color={Colors[colorScheme ?? "light"].primaryText}
+					// 					style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+					// 				/>
+					// 			)}
+					// 		</Pressable>
+					// 	</Link>
+					// ),
 				}}
 			/>
 			<Tabs.Screen
-				name='friends'
+				name='reminders'
 				options={{
-					title: "Friends",
-					tabBarIcon: ({ color }) => <TabBarIcon name='users' color={color} />,
+					title: "Reminders",
+					tabBarIcon: ({ color }) => <TabBarIcon name='bell' color={color} />,
 				}}
 			/>
+
 			<Tabs.Screen
 				name='settings'
 				options={{

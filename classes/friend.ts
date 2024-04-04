@@ -49,37 +49,67 @@ const contactMethods: ContactMethod[] = [
 // 	Other,
 // }
 
-class Friend {
+enum ReminderType {
+	email,
+	app,
+	text,
+	push,
+}
+
+interface Frequency {
+	unit: number;
+	period: string;
+}
+
+// interface ContactInfo {
+// 	email: string;
+// 	phone: string;
+// }
+
+interface Friend {
+	id: string;
 	name: string;
-	nickname?: string;
-	id: number;
-	img?: string;
 	type: FriendType;
 	method: ContactMethod;
-	frequency?: string;
-	lastContacted?: Date;
-	constructor(
-		name: string,
-		type: FriendType,
-		lastContacted: Date,
-		method: ContactMethod,
-		img?: string,
-		frequency?: string,
-		nickname?: string
-	) {
-		this.name = name;
-		this.nickname = nickname;
-		this.id = Math.floor(Math.random() * 1000);
-		this.img = img;
-		this.type = type;
-		this.method = method;
-		this.frequency = frequency;
-		this.lastContacted = lastContacted;
-	}
-	edit() {
-		console.log("Edit");
-	}
+	lastContacted: Date;
+	birthday?: Date;
+	img?: string;
+	notes?: string;
+	nickname?: string;
+	frequency?: Frequency;
 }
+
+// class Friend {
+// 	name: string;
+// 	notes?: string;
+// 	nickname?: string;
+// 	id: number;
+// 	img?: string;
+// 	type: FriendType;
+// 	method: ContactMethod;
+// 	frequency?: Frequency;
+// 	lastContacted?: Date;
+// 	birthday?: Date;
+// 	constructor(
+// 		name: string,
+// 		type: FriendType,
+// 		lastContacted: Date,
+// 		method: ContactMethod,
+// 		img?: string,
+// 		frequency?: Frequency,
+// 		nickname?: string
+// 	) {
+// 		this.name = name;
+// 		this.nickname = nickname;
+// 		this.id = Math.floor(Math.random() * 1000);
+// 		this.img = img;
+// 		this.type = type;
+// 		this.method = method;
+// 		this.frequency = frequency;
+// 		this.lastContacted = lastContacted;
+// 	}
+
+// }
 
 // // https://react-native-async-storage.github.io/async-storage/docs/usage
 // class FriendList {
@@ -103,4 +133,4 @@ class Friend {
 // 	}
 // }
 
-export { Friend, FriendType, ContactMethod, contactMethods };
+export { Friend, FriendType, ContactMethod, contactMethods, Frequency };

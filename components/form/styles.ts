@@ -5,7 +5,7 @@ const formStyles = StyleSheet.create({
 	title: {
 		fontSize: 20,
 		textAlign: "center",
-		fontWeight: "bold",
+		fontFamily: "Fredoka-SemiBold",
 	},
 	errorText: {
 		color: "red",
@@ -34,16 +34,25 @@ const formStyles = StyleSheet.create({
 		// alignItems: "center",
 		// justifyContent: "center",
 	},
+	image: {
+		width: 100,
+		height: 100,
+		borderRadius: 50,
+	},
 	label: {
 		fontSize: 15,
-		fontWeight: "bold",
-		fontFamily: "Fredoka",
+		fontFamily: "Fredoka-SemiBold",
 	},
 	input: {
 		backgroundColor: "white",
 		padding: 12,
 		borderRadius: 8,
 		height: 50,
+		borderWidth: 1,
+		borderColor: "transparent",
+	},
+	inputFocused: {
+		borderColor: Colors.light.primary,
 	},
 	formField: {
 		marginBottom: 10,
@@ -57,40 +66,6 @@ const formStyles = StyleSheet.create({
 		borderRadius: 10,
 		shadowColor: Colors.light.primaryDark,
 		shadowOffset: { width: 0, height: 2 },
-	},
-	centeredView: {
-		flex: 1,
-		justifyContent: "center",
-		alignItems: "center",
-		marginTop: 50,
-	},
-	closeIcon: {
-		position: "absolute",
-		right: 10,
-		top: 10,
-	},
-	modalOverlay: {
-		backgroundColor: "rgba(0,0,0,0.5)",
-		position: "absolute",
-		width: "100%",
-		height: "100%",
-	},
-
-	calenderContainer: {
-		backgroundColor: Colors.light.primaryWhite,
-		margin: 20,
-		marginTop: 50,
-		borderRadius: 20,
-		padding: 35,
-		alignItems: "center",
-		shadowColor: "#000",
-		shadowOffset: {
-			width: 0,
-			height: 2,
-		},
-		shadowOpacity: 0.25,
-		shadowRadius: 4,
-		elevation: 5,
 	},
 });
 

@@ -31,10 +31,10 @@ export default React.forwardRef<any, Props>(
 					onValueChange={(data, selectedIndex) => {
 						field.onChange(data[selectedIndex]);
 					}}
-					wrapperHeight={150}
+					wrapperHeight={25}
 					itemHeight={50}
-					highlightColor={"#d8d8d8"}
-					wrapperBackground='#ffffff'
+					// highlightColor={"#d8d8d8"}
+					// wrapperBackground='#ffffff'
 					renderItem={(data, index, isSelected) => {
 						return <Text style={formStyles.input}>{data[index]}</Text>;
 					}}

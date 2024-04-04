@@ -6,7 +6,7 @@
 import {
 	Text as DefaultText,
 	View as DefaultView,
-	StyleSheet,
+	SafeAreaView,
 } from "react-native";
 
 import Colors from "@/constants/Colors";
@@ -41,21 +41,46 @@ export function Text(props: TextProps) {
 		{ light: lightColor, dark: darkColor },
 		"primaryText"
 	);
+	const fontFamily = "Fredoka";
+	return <DefaultText style={[{ color, fontFamily }, style]} {...otherProps} />;
+}
+
+// export function View(props: ViewProps) {
+// 	const { style, lightColor, darkColor, ...otherProps } = props;
+// 	const backgroundColor = useThemeColor(
+// 		{ light: lightColor, dark: darkColor },
+// 		"primaryWhite"
+// 	);
+
+// 	return <DefaultView style={[{ backgroundColor }, style]} {...otherProps} />;
+// }
+
+export function Row(props: ViewProps) {
+	const { style, ...otherProps } = props;
 
 	return (
-		<DefaultText
-			style={[{ color }, style, { fontFamily: "Fredoka" }]}
+		<DefaultView
+			style={[{ flexDirection: "row", alignItems: "center" }, style]}
 			{...otherProps}
 		/>
 	);
 }
 
-export function View(props: ViewProps) {
-	const { style, lightColor, darkColor, ...otherProps } = props;
+export function Layout(props: ViewProps) {
+	const { style, lightColor, darkColor, children, ...otherProps } = props;
 	const backgroundColor = useThemeColor(
 		{ light: lightColor, dark: darkColor },
 		"primaryWhite"
 	);
 
-	return <DefaultView style={[{ backgroundColor }, style]} {...otherProps} />;
+	return (
+		<SafeAreaView
+			style={[{ backgroundColor, flex: 1, height: "100%", width: "100%" }]}
+			{...otherProps}
+		>
+			<DefaultView style={{ height: "100%", width: "100%", padding: 20 }}>
+				{children}
+			</DefaultView>
+		</SafeAreaView>
+	);
 }

@@ -1,13 +1,5 @@
 import * as React from "react";
-import {
-	View,
-	TextInput,
-	Pressable,
-	StyleSheet,
-	ViewStyle,
-	TextStyle,
-	TextInputProps,
-} from "react-native";
+import { View, TextInput, Pressable, TextInputProps } from "react-native";
 import { useController, useFormContext, FieldError } from "react-hook-form";
 import { Text } from "../Themed";
 import formStyles from "./styles";
@@ -25,6 +17,7 @@ export default React.forwardRef<any, Props>(
 		const formContext = useFormContext();
 		const { formState } = formContext;
 		const { field } = useController({ name, rules });
+		const [isFocused, setIsFocused] = React.useState(false);
 
 		return (
 			<View style={formStyles.formField}>
@@ -34,10 +27,14 @@ export default React.forwardRef<any, Props>(
 				<TextInput
 					ref={ref}
 					onChangeText={field.onChange}
-					onBlur={field.onBlur}
+					onFocus={() => setIsFocused(true)}
+					onBlur={() => {
+						setIsFocused(false);
+						field.onBlur();
+					}}
 					value={field.value}
 					{...inputProps}
-					style={formStyles.input}
+					style={[formStyles.input, isFocused ? formStyles.inputFocused : {}]}
 				/>
 				{error && <Text style={formStyles.errorText}>{error.message}</Text>}
 			</View>

@@ -1,25 +1,17 @@
 import { StyleSheet } from "react-native";
 import Colors from "@/constants/Colors";
 
-const styles = StyleSheet.create({
+const baseStyles = StyleSheet.create({
 	title: {
 		fontSize: 20,
 		textAlign: "center",
-		fontWeight: "bold",
+		fontFamily: "Fredoka-SemiBold",
 	},
 	text: {
-		fontFamily: "Fredoka",
 		padding: 8,
-	},
-	container: {
-		flex: 1,
-
-		alignItems: "center",
-		justifyContent: "center",
 	},
 	list: {
 		padding: 20,
-
 		width: "100%",
 	},
 	item: {
@@ -28,34 +20,44 @@ const styles = StyleSheet.create({
 		marginVertical: 10,
 		padding: 20,
 	},
-	button: {
-		paddingVertical: 10,
-		fontSize: 15,
-		paddingHorizontal: 15,
-		backgroundColor: Colors.light.primary,
-		borderRadius: 10,
-		shadowColor: Colors.light.primaryDark,
-		shadowOffset: { width: 0, height: 2 },
-	},
-	buttonDown: {
-		transform: [{ translateY: 2 }],
-		paddingVertical: 10,
-		fontSize: 15,
-		paddingHorizontal: 15,
-		backgroundColor: Colors.light.primary,
-		borderRadius: 10,
-	},
-	buttonText: {
-		color: Colors.light.primaryText,
-		fontWeight: "bold",
-		fontFamily: "Fredoka",
-	},
-
 	separator: {
 		marginVertical: 30,
 		height: 1,
 		width: "80%",
 	},
+	centeredView: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
+		marginTop: 50,
+	},
+	closeIcon: {
+		position: "absolute",
+		right: 10,
+		top: 10,
+	},
+	modalOverlay: {
+		backgroundColor: "rgba(0,0,0,0.5)",
+		position: "absolute",
+		width: "100%",
+		height: "100%",
+	},
+	modal: {
+		backgroundColor: Colors.light.primaryWhite,
+		margin: 20,
+		marginTop: 50,
+		borderRadius: 20,
+		padding: 35,
+		alignItems: "center",
+		shadowColor: "#000",
+		shadowOffset: {
+			width: 0,
+			height: 2,
+		},
+		shadowOpacity: 0.25,
+		shadowRadius: 4,
+		elevation: 5,
+	},
 });
 
-export default styles;
+export default baseStyles;
