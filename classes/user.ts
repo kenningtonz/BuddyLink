@@ -2,13 +2,14 @@ import { Friend } from "./friend";
 import { Reminder } from "./reminder";
 import { time } from "./time";
 
+import { auth } from "@/utils/firebaseConfig";
+
 interface User {
 	id: string;
-	email: string;
-	name: string;
+	isLocal: boolean;
+	email?: string;
+	name?: string;
 	settings: UserSettings;
-	friends: Friend[];
-	reminders: Reminder[];
 }
 
 //settings

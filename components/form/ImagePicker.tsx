@@ -3,8 +3,9 @@ import * as ImagePicker from "expo-image-picker";
 import { useController, useFormContext, FieldError } from "react-hook-form";
 import { Text } from "../Themed";
 
-import { Pressable, View, Image } from "react-native";
-import formStyles from "./styles";
+import { Pressable, View, Image, useColorScheme } from "react-native";
+import { sharedFormStyles, darkTheme, lightTheme } from "./styles";
+
 import React, { useState } from "react";
 
 interface Props {
@@ -22,7 +23,10 @@ export default React.forwardRef<any, Props>(
 		const formContext = useFormContext();
 		const { formState } = formContext;
 		const { field } = useController({ name, rules });
-		field.value = field.value || imageProps.defaultValue;
+		// field.value = field.value || imageProps.defaultValue;
+
+		const theme = useColorScheme();
+		const themeStyles = theme === "dark" ? darkTheme : lightTheme;
 
 		const pickImage = async () => {
 			// No permissions request is necessary for launching the image library
@@ -41,12 +45,12 @@ export default React.forwardRef<any, Props>(
 		};
 
 		return (
-			<View style={formStyles.formField}>
-				<Text style={formStyles.label}>{label}</Text>
+			<View style={[sharedFormStyles.formField]}>
+				<Text style={[sharedFormStyles.label, themeStyles.label]}>{label}</Text>
 				<Pressable onPress={pickImage}>
-					<Image source={{ uri: field.value }} style={formStyles.image} />
+					<Image source={{ uri: field.value }} style={sharedFormStyles.image} />
 				</Pressable>
-				{error && <Text style={formStyles.errorText}>{error.message}</Text>}
+				{error && <Text style={[themeStyles.error]}>{error.message}</Text>}
 			</View>
 		);
 	}

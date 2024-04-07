@@ -1,15 +1,19 @@
 import { Layout, Text } from "@/components/Themed";
 
 import { View, FlatList } from "react-native";
-import baseStyles from "@/components/styles";
+import { sharedStyles as baseStyles } from "@/components/styles";
 import React from "react";
 import { Reminder } from "@/classes/reminder";
-import { useUserStore } from "@/classes/userStore";
+import { useStore } from "@/classes/userStore";
+import { Link } from "expo-router";
 
 const Reminders = () => {
-	const reminders = useUserStore((state) => state.reminders);
+	const reminders = useStore((state) => state.reminders);
 	return (
 		<Layout>
+			<Link href={"/reminder/1"}>
+				<Text>test</Text>{" "}
+			</Link>
 			<FlatList
 				style={baseStyles.list}
 				data={reminders}

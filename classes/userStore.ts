@@ -1,71 +1,52 @@
 import { create } from "zustand";
 import { User, UserSettings } from "@/classes/user";
 import { Reminder } from "@/classes/reminder";
-import { Session } from "@supabase/supabase-js";
-import { supabase } from "@/utils/supabase";
-import React from "react";
-
-async function loadUser(
-	session: Session,
-	setLoading: React.Dispatch<React.SetStateAction<boolean>>
-) {
-	try {
-		setLoading(true);
-		const { data, error, status } = await supabase
-			.from("profiles")
-			.select(`id, name, email, settings, friends, reminders`)
-			.eq("id", session?.user.id)
-			.single();
-		if (error && status !== 406) {
-			throw error;
-		}
-
-		if (data) {
-			const user = {
-				id: data.id,
-				email: data.email,
-				name: data.name,
-				settings: data.settings,
-				friends: data.friends,
-				reminders: data.reminders,
-			};
-			return user;
-		}
-	} catch (error) {
-		if (error instanceof Error) {
-			console.error(error.message);
-		}
-	} finally {
-		setLoading(false);
-	}
-}
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Friend } from "./friend";
 
 interface UserState {
-	session: Session | null;
-	reminders: Reminder[];
 	user: User | null;
-	settings: UserSettings;
 	setUser: (user: User) => void;
-	setSettings: (settings: UserSettings) => void;
-	addReminder: (reminder: Reminder) => void;
-	setReminderSeen: (reminder: Reminder) => void;
-	setSession: (session: Session | null) => void;
 }
 
-const useUserStore = create<UserState>((set) => ({
-	session: null,
-	setSession: (session) => set({ session }),
-	reminders: [],
+interface ReminderState {
+	reminders: Reminder[];
+	addReminder: (reminder: Reminder) => void;
+	setReminderSeen: (reminder: Reminder) => void;
+}
+
+interface FriendState {
+	friends: Friend[];
+	addFriend: (friend: Friend) => void;
+	removeFriend: (id: string) => void;
+	editFriend: (friend: Friend) => void;
+}
+
+const useStore = create<UserState & FriendState & ReminderState>((set) => ({
 	user: null,
-	settings: {
-		pushNotifications: false,
-		reminderTime: { hour: 12, minute: 0 },
-	},
 	setUser: (user) => set({ user }),
-	setSettings: (settings) => set({ settings }),
+
+	friends: [],
+	addFriend: (friend) => {
+		set((state) => ({ friends: [...state.friends, friend] }));
+	},
+	removeFriend: (id: string) =>
+		set((state) => ({
+			friends: state.friends.filter((friend) => friend.id !== id),
+		})),
+	editFriend: (friend: Friend) =>
+		set((state) => ({
+			friends: state.friends.map((f) => {
+				if (f.id === friend.id) {
+					return friend;
+				}
+				return f;
+			}),
+		})),
+
+	reminders: [],
 	addReminder: (reminder) =>
 		set((state) => ({ reminders: [...state.reminders, reminder] })),
-
 	setReminderSeen: (reminder) =>
 		set((state) => ({
 			reminders: state.reminders.map((r) => {
@@ -77,4 +58,46 @@ const useUserStore = create<UserState>((set) => ({
 		})),
 }));
 
-export { useUserStore };
+export function saveToLocal() {
+	const reminders = useStore.getState().reminders;
+	const user = useStore.getState().user;
+	const friends = useStore.getState().friends;
+	if (reminders.length > 0) {
+		AsyncStorage.setItem("reminders", JSON.stringify(reminders));
+	}
+	if (user) {
+		AsyncStorage.setItem("user", JSON.stringify(user));
+	}
+	if (friends.length > 0) {
+		AsyncStorage.setItem("friends", JSON.stringify(friends));
+	}
+}
+
+export async function loadFromLocal() {
+	const friendsData = await AsyncStorage.getItem("friends");
+	console.log(friendsData, "friends");
+	if (friendsData) {
+		const friends = JSON.parse(friendsData);
+		for (const friend of friends) {
+			friend.lastContacted = new Date(friend.lastContacted);
+		}
+		useStore.setState({ friends });
+	}
+
+	const reminders = await AsyncStorage.getItem("reminders");
+	if (reminders) {
+		useStore.setState({ reminders: JSON.parse(reminders) });
+	}
+
+	const user = await AsyncStorage.getItem("user");
+	console.log(user, "user");
+	if (user) {
+		useStore.setState({ user: JSON.parse(user) });
+
+		return true;
+	}
+
+	return false;
+}
+
+export { useStore };

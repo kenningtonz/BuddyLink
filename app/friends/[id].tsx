@@ -1,17 +1,17 @@
 import { useLocalSearchParams, useRouter, Stack } from "expo-router";
 import React, { useState } from "react";
-import { useFriendStore } from "@/classes/friendStore";
+import { useStore, saveToLocal } from "@/classes/userStore";
+
 import relativeDate from "@/utils/relativeDate";
 import { SubmitHandler } from "react-hook-form";
-import { View as Column, Image, Pressable } from "react-native";
+import { View as Column, Image, Pressable, useColorScheme } from "react-native";
 import { Text, Row, Layout } from "@/components/Themed";
 import { Button, ButtonVariants } from "@/components/Button";
-import baseStyles from "@/components/styles";
-import { FontAwesome } from "@expo/vector-icons";
+import { sharedStyles as baseStyles } from "@/components/styles";
+import { FontAwesome, FontAwesome6 } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import FriendForm from "@/components/form/FriendForm";
-
-import { formStyles } from "@/components/form";
+import { LinearGradient } from "expo-linear-gradient";
 
 import Dialog from "@/components/Dialog";
 
@@ -19,7 +19,6 @@ import { FriendType, contactMethods } from "@/classes/friend";
 
 interface FormData {
 	name: string;
-	type: FriendType;
 	method: number;
 	freq1: number;
 	freq2: string;
@@ -29,13 +28,20 @@ interface FormData {
 
 const Friend = () => {
 	const { id } = useLocalSearchParams<{ id: string }>();
-	const friendList = useFriendStore((state) => state.friends);
-	const editFriend = useFriendStore((state) => state.editFriend);
-	const removeFriend = useFriendStore((state) => state.removeFriend);
+	const friendList = useStore((state) => state.friends);
+	const editFriend = useStore((state) => state.editFriend);
+	const removeFriend = useStore((state) => state.removeFriend);
 	const [showDialog, setShowDialog] = useState(false);
 
 	const [isEditing, setIsEditing] = useState(false);
 	const friend = friendList.find((f) => f.id === id);
+
+	const theme = useColorScheme();
+
+	const gradientColors =
+		theme === "light"
+			? [Colors.light.primaryContainer, Colors.light.background]
+			: [Colors.dark.primaryContainer, Colors.dark.background];
 
 	const router = useRouter();
 
@@ -49,7 +55,7 @@ const Friend = () => {
 
 	const onSubmit: SubmitHandler<FormData> = (data) => {
 		friend.name = data.name;
-		friend.type = data.type;
+
 		friend.method = contactMethods[data.method];
 		friend.frequency = { unit: data.freq1, period: data.freq2 };
 		friend.img = data.img;
@@ -57,6 +63,7 @@ const Friend = () => {
 
 		editFriend(friend);
 		setIsEditing(false);
+		saveToLocal();
 		console.log(data);
 	};
 
@@ -64,8 +71,21 @@ const Friend = () => {
 		<Layout>
 			<Stack.Screen
 				options={{
-					title: friend.name,
+					title: "",
 					headerTitleStyle: { fontFamily: "Fredoka" },
+					headerBackground: () => (
+						<LinearGradient
+							colors={gradientColors}
+							style={{
+								position: "absolute",
+								left: 0,
+								right: 0,
+								top: 0,
+								height: "100%",
+							}}
+						/>
+					),
+
 					headerRight: () => {
 						if (isEditing) return null;
 						return (
@@ -78,8 +98,15 @@ const Friend = () => {
 									<FontAwesome
 										name='edit'
 										size={25}
-										color={Colors.light.primaryText}
-										style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+										// color={Colors.light.primaryText}
+										style={{
+											marginRight: 15,
+											opacity: pressed ? 0.5 : 1,
+											color:
+												theme === "light"
+													? Colors.light.onPrimaryContainer
+													: Colors.dark.onPrimaryContainer,
+										}}
 									/>
 								)}
 							</Pressable>
@@ -110,7 +137,7 @@ const Friend = () => {
 						defaultValues={{
 							img: friend.img ?? "/assets/images/placeholder.png",
 							name: friend.name,
-							type: friend.type,
+
 							method: friend.method?.id,
 							freq1: friend.frequency?.unit ?? 1,
 							freq2: friend.frequency?.period ?? "day",
@@ -120,6 +147,7 @@ const Friend = () => {
 					/>
 
 					<Button
+						style={{ marginTop: 20 }}
 						variant={ButtonVariants.Danger}
 						onPress={() => setShowDialog(true)}
 						text='Delete Friend'
@@ -127,36 +155,60 @@ const Friend = () => {
 				</>
 			) : (
 				<>
-					<Text style={baseStyles.title}>Friend</Text>
-					{/* <Text>id: {id}</Text> */}
-					<Row style={{ gap: 20 }}>
-						<Image
-							source={{ uri: friend.img }}
-							style={{ width: 100, height: 100, borderRadius: 50 }}
-						/>
-						<Text style={baseStyles.title}>{friend.name}</Text>
+					<Row style={{ gap: 20, marginBottom: 20 }}>
+						{friend.img ? (
+							<Image
+								source={{ uri: friend.img }}
+								style={{ width: 100, height: 100, borderRadius: 50 }}
+							/>
+						) : (
+							<Column
+								style={{
+									width: 100,
+									height: 100,
+									borderRadius: 50,
+									backgroundColor: Colors.light.secondaryContainer,
+									justifyContent: "center",
+									alignItems: "center",
+								}}
+							>
+								<FontAwesome6 name='user' size={50} />
+							</Column>
+						)}
+
+						<Text style={{ fontSize: 30 }}>{friend.name}</Text>
 					</Row>
-					<Text>Type: {friend.type}</Text>
+					{friend.type ? (
+						<>
+							<Text style={baseStyles.label}>Type:</Text>
+							<Text style={{ fontSize: 16 }}>{friend.type}</Text>
+						</>
+					) : null}
+					{friend.method ? (
+						<Text style={baseStyles.label}>Preferred Contact Method:</Text>
+					) : null}
 					<Row>
-						<Text style={formStyles.label}>Preferred Contact Method:</Text>
-						<Text>{friend.method?.name}</Text>
-						<FontAwesome
-							name={friend.method?.icon}
-							size={25}
-							color={Colors.light.primaryText}
-						/>
+						{friend.method ? (
+							<>
+								<Text>{friend.method.name}</Text>
+								<FontAwesome6
+									name={friend.method.icon}
+									size={25}
+									// color={Colors.light.primaryText}
+								/>
+							</>
+						) : null}
 					</Row>
 
-					{/* <Text>frequency: {friend.frequency}</Text> */}
-					<Text>
-						Last Contact:{" "}
-						{/* {friend.lastContacted?.toLocaleDateString("en-CA", {
-								month: "long",
-								year: "numeric",
-								day: "numeric",
-							})} */}
-						{relativeDate(friend.lastContacted)}
+					<Text style={baseStyles.label}>Last Contacted:</Text>
+					<Text style={{ fontSize: 16 }}>
+						{friend.lastContacted.toLocaleDateString("en-CA", {
+							month: "long",
+							year: "numeric",
+							day: "numeric",
+						})}
 					</Text>
+					{/* <Text>frequency: {friend.frequency}</Text> */}
 				</>
 			)}
 		</Layout>

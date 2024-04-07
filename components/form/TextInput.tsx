@@ -1,8 +1,14 @@
 import * as React from "react";
-import { View, TextInput, Pressable, TextInputProps } from "react-native";
+import {
+	View,
+	TextInput,
+	Pressable,
+	TextInputProps,
+	useColorScheme,
+} from "react-native";
 import { useController, useFormContext, FieldError } from "react-hook-form";
 import { Text } from "../Themed";
-import formStyles from "./styles";
+import { sharedFormStyles, darkTheme, lightTheme } from "./styles";
 
 interface Props extends TextInputProps {
 	name: string;
@@ -19,10 +25,13 @@ export default React.forwardRef<any, Props>(
 		const { field } = useController({ name, rules });
 		const [isFocused, setIsFocused] = React.useState(false);
 
+		const theme = useColorScheme();
+		const themeStyles = theme === "dark" ? darkTheme : lightTheme;
+
 		return (
-			<View style={formStyles.formField}>
+			<View style={[sharedFormStyles.formField]}>
 				<Pressable onPress={() => formContext.setFocus(name)}>
-					<Text style={formStyles.label}>{label}</Text>
+					<Text style={[sharedFormStyles.label, themeStyles.label]}>{label}</Text>
 				</Pressable>
 				<TextInput
 					ref={ref}
@@ -34,9 +43,13 @@ export default React.forwardRef<any, Props>(
 					}}
 					value={field.value}
 					{...inputProps}
-					style={[formStyles.input, isFocused ? formStyles.inputFocused : {}]}
+					style={[
+						sharedFormStyles.input,
+						themeStyles.label,
+						isFocused ? themeStyles.inputFocused : {},
+					]}
 				/>
-				{error && <Text style={formStyles.errorText}>{error.message}</Text>}
+				{error && <Text style={[themeStyles.error]}>{error.message}</Text>}
 			</View>
 		);
 	}

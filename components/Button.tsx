@@ -1,119 +1,156 @@
 import React from "react";
-import { Text, StyleSheet, Pressable, PressableProps } from "react-native";
-import { FontAwesome } from "@expo/vector-icons";
+import {
+	Text,
+	StyleSheet,
+	Pressable,
+	PressableProps,
+	useColorScheme,
+} from "react-native";
+import { FontAwesome6 } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
-import { useThemeColor } from "./Themed";
 
 export enum ButtonVariants {
 	Primary = "primary",
 	Secondary = "secondary",
 	Danger = "danger",
-	Link = "link",
+	Ghost = "Ghost",
 }
 
 interface Props extends PressableProps {
 	onPress?: () => void;
-	text: string;
+	text?: string;
 	variant?: ButtonVariants;
+	icon?: keyof typeof FontAwesome6.glyphMap;
 }
 
 export const Button = React.forwardRef<any, Props>(
 	(props, ref): React.ReactElement => {
-		const { onPress, text, variant, ...otherProps } = props;
+		const { onPress, text, icon, variant, ...otherProps } = props;
 
-		const bgPrimary = useThemeColor({}, "primary");
-		const sPrimary = useThemeColor({}, "primaryDark");
-		const textPrimary = useThemeColor({}, "primaryText");
-
-		const bgSecondary = useThemeColor({}, "secondary");
-		const sSecondary = useThemeColor({}, "secondaryDark");
-		const textSecondary = useThemeColor({}, "secondaryText");
-		const textError = useThemeColor({}, "error");
+		const theme = useColorScheme();
+		const themeStyles = theme === "dark" ? darkTheme : lightTheme;
 
 		const buttonStyle = () => {
 			switch (variant) {
 				case ButtonVariants.Primary:
-					return [
-						styles.button,
-						{ backgroundColor: bgPrimary, shadowColor: sPrimary, color: textPrimary },
-					];
+					return [sharedStyles.button, themeStyles.primary];
 				case ButtonVariants.Secondary:
-					return [
-						styles.button,
-						{
-							backgroundColor: bgSecondary,
-							shadowColor: sSecondary,
-							color: textSecondary,
-						},
-					];
+					return [sharedStyles.button, themeStyles.secondary];
 				case ButtonVariants.Danger:
-					return [styles.danger, { color: textError }];
+					return [sharedStyles.danger, themeStyles.error];
+
+				case ButtonVariants.Ghost:
+					return [sharedStyles.ghost, themeStyles.ghost];
 				default:
-					return styles.button;
+					return sharedStyles.button;
 			}
 		};
 
 		return (
 			<Pressable ref={ref} onPress={onPress} {...otherProps}>
 				{({ pressed }) => (
-					<Text
-						style={[
-							buttonStyle(),
-							{
-								transform: [{ translateY: pressed ? 2 : 0 }],
-							},
-						]}
-					>
-						{text}
-					</Text>
+					<>
+						{text ? (
+							<Text
+								style={[
+									buttonStyle(),
+									sharedStyles.text,
+									{
+										transform: [{ translateY: pressed ? 2 : 0 }],
+									},
+								]}
+							>
+								{text}
+							</Text>
+						) : null}
+						{icon ? (
+							<FontAwesome6
+								name={icon}
+								style={[
+									buttonStyle(),
+									sharedStyles.icon,
+									{ transform: [{ translateY: pressed ? 2 : 0 }] },
+								]}
+							/>
+						) : null}
+					</>
 				)}
 			</Pressable>
 		);
 	}
 );
 
-// export default function ButtonIcon(
-// 	props: PressableProps,
-// 	icon: keyof typeof FontAwesome.glyphMap,
-// ) {
-// 	const { onPress, ...otherProps } = props;
-// 	const backgroundColor = useThemeColor({}, "primary");
-// 	const shadowColor = useThemeColor({}, "primaryDark");
-// 	const textColor = useThemeColor({}, "primaryText");
-// 	return (
-// 		<Pressable
-// 			style={({ pressed }) => ({
-// 				transform: [{ translateY: pressed ? 2 : 0 }],
-// 				backgroundColor,
-// 				shadowColor,
-//
-// 				...styles.button,
-// 			})}
-// 			onPress={onPress}
-// 			{...otherProps}
-// 		>
-
-// 		<FontAwesome name={icon} size={24} color={textColor} />
-// 		</Pressable>
-// 	);
-// }
-
-const styles = StyleSheet.create({
+const sharedStyles = StyleSheet.create({
 	button: {
-		paddingVertical: 10,
-		fontSize: 15,
 		shadowOffset: { width: 0, height: 2 },
-		paddingHorizontal: 15,
+		shadowOpacity: 0.2,
+		shadowRadius: 3,
+		shadowColor: Colors.light.primary,
+		elevation: 2,
 		textAlign: "center",
 		borderRadius: 10,
 		fontFamily: "Fredoka-SemiBold",
 	},
-
+	text: {
+		paddingVertical: 10,
+		paddingHorizontal: 15,
+		fontSize: 18,
+	},
+	icon: {
+		padding: 10,
+		fontSize: 22,
+	},
 	danger: {
+		paddingVertical: 10,
+		fontSize: 12,
+		paddingHorizontal: 15,
+		textAlign: "center",
+		fontFamily: "Fredoka",
+	},
+	ghost: {
 		paddingVertical: 10,
 		fontSize: 15,
 		paddingHorizontal: 15,
 		textAlign: "center",
 		fontFamily: "Fredoka",
+		backgroundColor: "transparent",
+	},
+});
+
+const lightTheme = StyleSheet.create({
+	primary: {
+		backgroundColor: Colors.light.primaryContainer,
+		shadowColor: Colors.light.primary,
+		color: Colors.light.onPrimaryContainer,
+	},
+	secondary: {
+		backgroundColor: Colors.light.secondaryContainer,
+		shadowColor: Colors.light.secondary,
+		color: Colors.light.onSecondaryContainer,
+	},
+	error: {
+		color: Colors.light.onErrorContainer,
+	},
+	ghost: {
+		color: Colors.light.onPrimaryContainer,
+	},
+});
+
+const darkTheme = StyleSheet.create({
+	primary: {
+		backgroundColor: Colors.dark.primaryContainer,
+		shadowColor: Colors.dark.primary,
+		color: Colors.dark.onPrimaryContainer,
+	},
+	secondary: {
+		backgroundColor: Colors.dark.secondaryContainer,
+		shadowColor: Colors.dark.secondary,
+		color: Colors.dark.onSecondaryContainer,
+	},
+	error: {
+		color: Colors.dark.onErrorContainer,
+	},
+	ghost: {
+		color: Colors.dark.onPrimaryContainer,
 	},
 });

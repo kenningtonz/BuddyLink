@@ -17,15 +17,15 @@ import {
 import { generateID } from "@/utils/generateID";
 
 import { Text, Layout } from "@/components/Themed";
-import { useFriendStore } from "@/classes/friendStore";
+
+import { useStore, saveToLocal } from "@/classes/userStore";
 import { useRouter } from "expo-router";
 import FriendForm from "@/components/form/FriendForm";
 
-import baseStyles from "@/components/styles";
+import { sharedStyles as baseStyles } from "@/components/styles";
 
 interface FormData {
 	name: string;
-	type: FriendType;
 	method: number;
 	freq1: number;
 	freq2: string;
@@ -34,21 +34,22 @@ interface FormData {
 }
 
 const NewFriend = () => {
-	const addFriend = useFriendStore((state) => state.addFriend);
+	const addFriend = useStore((state) => state.addFriend);
 	const router = useRouter();
+	const friends = useStore((state) => state.friends);
 
 	const onSubmit: SubmitHandler<FormData> = (data) => {
 		const friend = {
 			name: data.name,
-			type: data.type,
 			method: contactMethods[data.method],
-			freq1: data.freq1,
-			freq2: data.freq2,
+			frequency: { unit: data.freq1, period: data.freq2 },
 			img: data.img,
 			lastContacted: new Date(data.lastContacted),
 			id: generateID(),
 		};
 		addFriend(friend);
+		console.log(friends);
+		saveToLocal();
 		router.back();
 		console.log(data);
 	};
@@ -62,11 +63,6 @@ const NewFriend = () => {
 				defaultValues={{
 					img: "/assets/images/placeholder.png",
 					name: "",
-					type: FriendType.Friend,
-					method: 0,
-					freq1: 1,
-					freq2: "day",
-					lastContacted: new Date(),
 				}}
 			/>
 		</Layout>

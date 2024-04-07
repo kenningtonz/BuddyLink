@@ -1,24 +1,33 @@
 import { StyleSheet } from "react-native";
 import Colors from "@/constants/Colors";
 
-const baseStyles = StyleSheet.create({
+export const sharedStyles = StyleSheet.create({
 	title: {
 		fontSize: 20,
 		textAlign: "center",
 		fontFamily: "Fredoka-SemiBold",
 	},
+	bigTitle: {
+		fontSize: 30,
+		textAlign: "center",
+		fontFamily: "Fredoka-SemiBold",
+	},
+
 	text: {
 		padding: 8,
 	},
 	list: {
-		padding: 20,
 		width: "100%",
 	},
 	item: {
-		backgroundColor: Colors.light.primaryLight,
+		display: "flex",
+		flexDirection: "row",
+		alignItems: "center",
+		gap: 10,
 		borderRadius: 8,
 		marginVertical: 10,
 		padding: 20,
+		elevation: 2,
 	},
 	separator: {
 		marginVertical: 30,
@@ -36,28 +45,48 @@ const baseStyles = StyleSheet.create({
 		right: 10,
 		top: 10,
 	},
-	modalOverlay: {
-		backgroundColor: "rgba(0,0,0,0.5)",
-		position: "absolute",
-		width: "100%",
-		height: "100%",
+	image: {
+		width: 50,
+		height: 50,
+		borderRadius: 50,
+		elevation: 2,
 	},
-	modal: {
-		backgroundColor: Colors.light.primaryWhite,
-		margin: 20,
-		marginTop: 50,
-		borderRadius: 20,
-		padding: 35,
+	placeHolderImage: {
+		width: 50,
+		height: 50,
+		borderRadius: 50,
+		elevation: 2,
+		display: "flex",
 		alignItems: "center",
-		shadowColor: "#000",
-		shadowOffset: {
-			width: 0,
-			height: 2,
-		},
-		shadowOpacity: 0.25,
-		shadowRadius: 4,
-		elevation: 5,
+		justifyContent: "center",
+		fontSize: 20,
+	},
+	label: {
+		fontSize: 16,
+		fontFamily: "Fredoka-SemiBold",
 	},
 });
 
-export default baseStyles;
+export const lightTheme = StyleSheet.create({
+	item: {
+		backgroundColor: Colors.light.tertiaryContainer,
+	},
+	image: {
+		backgroundColor: Colors.light.secondaryContainer,
+	},
+	label: {
+		color: Colors.light.primary,
+	},
+});
+
+export const darkTheme = StyleSheet.create({
+	item: {
+		backgroundColor: Colors.dark.tertiaryContainer,
+	},
+	image: {
+		backgroundColor: Colors.dark.secondaryContainer,
+	},
+	label: {
+		color: Colors.dark.primary,
+	},
+});

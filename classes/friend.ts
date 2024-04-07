@@ -69,14 +69,14 @@ interface Frequency {
 interface Friend {
 	id: string;
 	name: string;
-	type: FriendType;
-	method: ContactMethod;
 	lastContacted: Date;
+	frequency: Frequency;
+	method?: ContactMethod;
 	birthday?: Date;
 	img?: string;
+	type?: FriendType;
 	notes?: string;
 	nickname?: string;
-	frequency?: Frequency;
 }
 
 // class Friend {

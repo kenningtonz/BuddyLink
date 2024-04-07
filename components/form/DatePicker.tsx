@@ -4,8 +4,9 @@ import { Text } from "../Themed";
 import dayjs from "dayjs";
 import Dialog from "../Dialog";
 
-import { Pressable, View, Modal } from "react-native";
-import formStyles from "./styles";
+import { Pressable, View, useColorScheme } from "react-native";
+import { sharedFormStyles, darkTheme, lightTheme } from "./styles";
+
 import React, { useState } from "react";
 
 import Colors from "@/constants/Colors";
@@ -27,19 +28,22 @@ export default React.forwardRef<any, Props>(
 		const { formState } = formContext;
 		const { field } = useController({ name, rules });
 
+		const theme = useColorScheme();
+		const themeStyles = theme === "dark" ? darkTheme : lightTheme;
+
 		return (
 			<>
-				<View style={formStyles.formField}>
-					<Text style={formStyles.label}>{label}</Text>
+				<View style={[sharedFormStyles.formField]}>
+					<Text style={[sharedFormStyles.label, themeStyles.label]}>{label}</Text>
 					<Pressable onPress={() => setOpen(!open)}>
-						<Text style={formStyles.input}>
+						<Text style={[sharedFormStyles.input, themeStyles.input]}>
 							{field.value
 								? dayjs(field.value).format("DD MMMM, YYYY")
 								: "Select Date"}
 						</Text>
 					</Pressable>
 
-					{error && <Text style={formStyles.errorText}>{error.message}</Text>}
+					{error && <Text style={[themeStyles.error]}>{error.message}</Text>}
 				</View>
 				{open ? (
 					<Dialog open={open} setOpen={setOpen}>

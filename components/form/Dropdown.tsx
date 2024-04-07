@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { View } from "react-native";
+import { View, useColorScheme } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { useController, useFormContext, FieldError } from "react-hook-form";
 import { Text } from "../Themed";
-import formStyles from "./styles";
+import { sharedFormStyles, darkTheme, lightTheme } from "./styles";
 import Colors from "@/constants/Colors";
 import { FontAwesome } from "@expo/vector-icons";
 
@@ -30,21 +30,24 @@ export default React.forwardRef<any, Props>(
 		const { field } = useController({ name, rules });
 		const [isFocused, setIsFocused] = React.useState(false);
 
+		const theme = useColorScheme();
+		const themeStyles = theme === "dark" ? darkTheme : lightTheme;
+
 		const getSelectedIcon = (value: any) => {
 			const item = data.find((item) => item.value == value);
 			return item ? item.icon : "chevron-down";
 		};
 
 		return (
-			<View style={formStyles.formField}>
-				<Text style={formStyles.label}>{label}</Text>
+			<View style={sharedFormStyles.formField}>
+				<Text style={[sharedFormStyles.label, themeStyles.label]}>{label}</Text>
 				<Dropdown
-					containerStyle={formStyles.dropdown}
-					placeholderStyle={formStyles.placeholderStyle}
-					selectedTextStyle={formStyles.textStyle}
-					itemContainerStyle={formStyles.itemContainer}
+					containerStyle={sharedFormStyles.dropdown}
+					placeholderStyle={sharedFormStyles.placeholderStyle}
+					selectedTextStyle={sharedFormStyles.textStyle}
+					itemContainerStyle={sharedFormStyles.itemContainer}
 					activeColor={Colors.light.primary}
-					itemTextStyle={formStyles.textStyle}
+					itemTextStyle={sharedFormStyles.textStyle}
 					accessibilityLabel={`Select a ${label}`}
 					placeholder={`Select a ${label}`}
 					labelField='label'
@@ -56,14 +59,14 @@ export default React.forwardRef<any, Props>(
 								<FontAwesome
 									name={getSelectedIcon(field.value)}
 									size={20}
-									color={Colors.light.primary}
+									color={theme === "dark" ? Colors.dark.primary : Colors.light.primary}
 								/>
 							);
 						} else {
 							<FontAwesome
 								name={"chevron-down"}
 								size={20}
-								color={Colors.light.primary}
+								color={theme === "dark" ? Colors.dark.primary : Colors.light.primary}
 							/>;
 						}
 					}}
@@ -78,13 +81,13 @@ export default React.forwardRef<any, Props>(
 						setIsFocused(false);
 					}}
 					style={[
-						formStyles.input,
-						isFocused ? formStyles.inputFocused : {},
+						[sharedFormStyles.input, themeStyles.input],
+						isFocused ? themeStyles.inputFocused : {},
 						customStyle ?? {},
 					]}
 					{...dropdownProps}
 				/>
-				{error && <Text style={formStyles.errorText}>{error.message}</Text>}
+				{error && <Text style={[themeStyles.error]}>{error.message}</Text>}
 			</View>
 		);
 	}

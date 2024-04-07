@@ -17,19 +17,29 @@ import {
 import { Button, ButtonVariants } from "@/components/Button";
 
 import {
-	formStyles,
+	sharedFormStyles,
+	darkTheme,
+	lightTheme,
 	TextInput,
 	Dropdown,
 	DatePicker,
-	ScrollWheel,
 	ImagePicker,
 } from "@/components/form";
 import { Text } from "@/components/Themed";
-import baseStyles from "@/components/styles";
+import { sharedStyles as baseStyles } from "@/components/styles";
+
+// interface FormData {
+// 	name: string;
+// 	type: FriendType;
+// 	method: number;
+// 	freq1: number;
+// 	freq2: string;
+// 	img: string;
+// 	lastContacted: Date;
+// }
 
 interface FormData {
 	name: string;
-	type: FriendType;
 	method: number;
 	freq1: number;
 	freq2: string;
@@ -40,7 +50,7 @@ interface FormData {
 interface Props {
 	onSubmit: SubmitHandler<FormData>;
 	buttonText: string;
-	defaultValues?: FormData;
+	defaultValues: Partial<FormData>;
 }
 
 export default React.forwardRef<any, Props>(
@@ -54,20 +64,18 @@ export default React.forwardRef<any, Props>(
 			<FormProvider {...methods}>
 				<>
 					<ImagePicker
-						defaultValue={"/assets/images/placeholder.png"}
 						name='img'
 						label='Image'
 						error={methods.formState.errors.img}
 						rules={{ required: "Image is required" }}
 					/>
 					<TextInput
-						defaultValue={""}
 						name='name'
 						label='Name'
 						error={methods.formState.errors.name}
 						rules={{ required: "Name is required" }}
 					/>
-					<Dropdown
+					{/* <Dropdown
 						name='type'
 						label='Friend Type'
 						error={methods.formState.errors.type}
@@ -79,7 +87,7 @@ export default React.forwardRef<any, Props>(
 							{ label: "Work", value: FriendType.Work },
 							{ label: "Other", value: FriendType.Other },
 						]}
-					/>
+					/> */}
 					<Dropdown
 						name='method'
 						label='Preferred Contact Method'
@@ -97,12 +105,11 @@ export default React.forwardRef<any, Props>(
 						error={methods.formState.errors.lastContacted}
 						rules={{ required: "Last Contacted is required" }}
 					/>
-					<Text style={baseStyles.title}>
-						How often do you want to contact this friend?
-					</Text>
+					<Text style={baseStyles.label}>Contact Frequency</Text>
 					<Row
 						style={{
 							justifyContent: "space-around",
+							marginBottom: 10,
 						}}
 					>
 						<Dropdown
@@ -136,7 +143,7 @@ export default React.forwardRef<any, Props>(
 					variant={ButtonVariants.Primary}
 					onPress={methods.handleSubmit(onSubmit)}
 					text={buttonText}
-				></Button>
+				/>
 			</FormProvider>
 		);
 	}
