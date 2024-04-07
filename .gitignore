@@ -5,7 +5,7 @@ node_modules/
 
 #firebase
 google-services.json
-utils/firebaseConfig.ts
+firebaseConfig.ts
 
 
 # Expo
