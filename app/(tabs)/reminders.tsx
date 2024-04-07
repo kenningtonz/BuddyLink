@@ -11,15 +11,16 @@ const Reminders = () => {
 	const reminders = useStore((state) => state.reminders);
 	return (
 		<Layout>
-			<Link href={"/reminder/1"}>
-				<Text>test</Text>{" "}
-			</Link>
-			<FlatList
-				style={baseStyles.list}
-				data={reminders}
-				keyExtractor={(item) => item.date.toString()}
-				renderItem={({ item }) => <ReminderItem reminder={item} />}
-			/>
+			{reminders.length > 0 ? (
+				<FlatList
+					style={baseStyles.list}
+					data={reminders}
+					keyExtractor={(item) => item.date.toString()}
+					renderItem={({ item }) => <ReminderItem reminder={item} />}
+				/>
+			) : (
+				<Text>No reminders</Text>
+			)}
 		</Layout>
 	);
 };
