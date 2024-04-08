@@ -5,9 +5,7 @@ import { Button, ButtonVariants } from "../Button";
 import { TextInput } from "../form";
 import { Row } from "../Themed";
 import { sharedStyles as styles } from "@/components/styles";
-import { LinearGradient } from "expo-linear-gradient";
-import Colors from "@/constants/Colors";
-import useColorScheme from "@/components/useColorScheme";
+
 const Page1: React.FC<{
 	next: () => void;
 	back: () => void;
@@ -22,20 +20,8 @@ const Page1: React.FC<{
 		next();
 	};
 
-	const theme = useColorScheme();
-
-	const gradientColors =
-		theme === "light"
-			? [Colors.light.tertiaryContainer, Colors.light.background]
-			: [Colors.dark.tertiaryContainer, Colors.dark.background];
-
 	return (
 		<>
-			<LinearGradient
-				// Background Linear Gradient
-				colors={gradientColors}
-				style={{ position: "absolute", left: 0, right: 0, top: 0, height: "100%" }}
-			/>
 			<Text style={[styles.bigTitle]}>What's your Friend's name?</Text>
 			<FormProvider {...methods}>
 				<TextInput

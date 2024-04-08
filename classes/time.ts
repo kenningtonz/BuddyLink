@@ -10,4 +10,11 @@ function timeToString(time: time) {
 	}`;
 }
 
-export { time, timeToString };
+function addDateTime(date: Date, time: time) {
+	const newDate = new Date(date);
+	newDate.setHours(time.hour);
+	newDate.setMinutes(time.minute);
+	return newDate;
+}
+
+export { time, timeToString, addDateTime };

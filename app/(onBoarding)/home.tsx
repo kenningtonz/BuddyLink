@@ -2,7 +2,7 @@ import { Link, Stack, useRouter } from "expo-router";
 import { useStore, saveToLocal } from "@/classes/userStore";
 import { Layout, Row } from "@/components/Themed";
 import { useEffect, useState } from "react";
-import { Pressable, Text, useColorScheme } from "react-native";
+import { Platform, Pressable, Text } from "react-native";
 import { Button, ButtonVariants } from "@/components/Button";
 import { sharedStyles as styles } from "@/components/styles";
 import {
@@ -17,14 +17,24 @@ import { time } from "@/classes/time";
 import { generateID } from "@/utils/generateID";
 import { Friend } from "@/classes/friend";
 
+import { Image } from "expo-image";
+import useColorScheme from "@/components/useColorScheme";
+import Colors from "@/constants/Colors";
+import { LinearGradient } from "expo-linear-gradient";
+import { newReminder } from "@/classes/reminder";
+
 export default function OnBoarding() {
 	const user = useStore((state) => state.user);
 
+	const addReminder = useStore((state) => state.addReminder);
 	const addFriend = useStore((state) => state.addFriend);
 	const router = useRouter();
 
 	const [onBoardPage, setOnBoardPage] = useState(0);
 	const setUser = useStore((state) => state.setUser);
+
+	const colorScheme = useColorScheme();
+	const theme = colorScheme === "light" ? "light" : "dark";
 
 	const [friend, setFriend] = useState<{
 		name: string;
@@ -52,34 +62,92 @@ export default function OnBoarding() {
 			settings: userSettings,
 			id: generateID(),
 		});
-		newFriend.setReminderTime(
-			userSettings.reminderTime.hour,
-			userSettings.reminderTime.minute
-		);
-		newFriend.setNextReminder();
 		addFriend(newFriend);
+		// if (user.id !== undefined) {
+		// 	addReminder(
+		// 		newReminder(
+		// 			newFriend.nextReminderDate,
+		// 			newFriend.id,
+		// 			newFriend.name,
+		// 			user.settings.reminderTime
+		// 		)
+		// 	);
+		// }
+		//testing
+		const today = new Date();
+		const currentHour = today.getHours();
+		const currentMinute = today.getMinutes();
+		addReminder(
+			newReminder(today, newFriend.id, newFriend.name, {
+				hour: currentHour,
+				minute: currentMinute + 1,
+			})
+		);
 		saveToLocal();
 		// if (isGuest) {
-		router.push("/(tabs)");
+		router.replace("/(tabs)");
 		// } else {
 		// 	router.push("/(onBoarding)/logup");
 		// }
 	};
 
+	const gradientColors =
+		theme === "light"
+			? [Colors.light.tertiaryContainer, Colors.light.background]
+			: [Colors.dark.tertiaryContainer, Colors.dark.background];
+
 	const next = () => {
-		setOnBoardPage(onBoardPage + 1);
+		if (Platform.OS === "web" && onBoardPage === 3) {
+			setOnBoardPage(onBoardPage + 2);
+		} else {
+			setOnBoardPage(onBoardPage + 1);
+		}
 	};
 
 	const back = () => {
-		setOnBoardPage(onBoardPage - 1);
+		if (Platform.OS === "web" && onBoardPage === 5) {
+			setOnBoardPage(onBoardPage - 2);
+		} else {
+			setOnBoardPage(onBoardPage - 1);
+		}
 	};
 
 	return (
 		<>
-			<Layout style={{ justifyContent: "space-around" }}>
+			<Layout
+				style={{
+					justifyContent: "space-around",
+				}}
+			>
+				<LinearGradient
+					// Background Linear Gradient
+					colors={gradientColors}
+					style={{ position: "absolute", left: 0, right: 0, top: 0, height: "100%" }}
+				/>
 				{onBoardPage == 0 ? (
 					<>
-						<Text>OnBoarding</Text>
+						<Image
+							style={{
+								width: 200,
+								height: 200,
+								alignSelf: "center",
+							}}
+							contentFit='contain'
+							source={require("../../assets/images/logo.png")}
+						/>
+						<Text
+							style={{
+								fontSize: 30,
+								fontFamily: "Fredoka-Medium",
+								textAlign: "center",
+								color:
+									theme === "light"
+										? Colors.light.onTertiaryContainer
+										: Colors.dark.onTertiaryContainer,
+							}}
+						>
+							Welcome to Buddy Link
+						</Text>
 						<Button
 							variant={ButtonVariants.Primary}
 							text='Add your First Friend'
@@ -142,7 +210,12 @@ export default function OnBoarding() {
 					/>
 				) : null}
 				{onBoardPage == 6 ? (
-					<Page6 friend={friend} userSettings={userSettings} next={complete} />
+					<Page6
+						friend={friend}
+						userSettings={userSettings}
+						next={complete}
+						back={back}
+					/>
 				) : null}
 
 				{/* {onBoardPage == 7 ? (

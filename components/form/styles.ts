@@ -65,6 +65,9 @@ const lightTheme = StyleSheet.create({
 	error: {
 		color: Colors.light.error,
 	},
+	image: {
+		backgroundColor: Colors.light.secondaryContainer,
+	},
 	dropdown: {
 		backgroundColor: Colors.light.primaryContainer,
 		shadowColor: Colors.light.primary,
@@ -95,6 +98,9 @@ const lightTheme = StyleSheet.create({
 const darkTheme = StyleSheet.create({
 	error: {
 		color: Colors.dark.error,
+	},
+	image: {
+		backgroundColor: Colors.dark.secondaryContainer,
 	},
 	dropdown: {
 		backgroundColor: Colors.dark.primaryContainer,

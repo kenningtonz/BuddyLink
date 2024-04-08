@@ -5,6 +5,7 @@ import { Tabs } from "expo-router";
 import Colors from "@/constants/Colors";
 import useColorScheme from "@/components/useColorScheme";
 import { useClientOnlyValue } from "@/components/useClientOnlyValue";
+import { useStore } from "@/classes/userStore";
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
@@ -15,6 +16,9 @@ function TabBarIcon(props: {
 }
 
 export default function TabLayout() {
+	const unSeenReminders = useStore((state) =>
+		state.reminders.filter((r) => !r.hasSeen)
+	);
 	const colorScheme = useColorScheme();
 
 	return (
@@ -83,6 +87,19 @@ export default function TabLayout() {
 				options={{
 					title: "Reminders",
 					tabBarShowLabel: false,
+					tabBarBadge:
+						unSeenReminders.length > 0 ? unSeenReminders.length : undefined,
+					tabBarAccessibilityLabel: "Reminders",
+					tabBarBadgeStyle: {
+						backgroundColor:
+							colorScheme === "light"
+								? Colors.light.errorContainer
+								: Colors.dark.errorContainer,
+						color:
+							colorScheme === "light"
+								? Colors.light.onErrorContainer
+								: Colors.dark.onErrorContainer,
+					},
 					tabBarIcon: ({ color }) => <TabBarIcon name='bell' color={color} />,
 				}}
 			/>

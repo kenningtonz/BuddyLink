@@ -13,6 +13,7 @@ import { Pressable } from "react-native";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import useColorScheme from "@/components/useColorScheme";
 import Colors from "@/constants/Colors";
+import { newReminder } from "@/classes/reminder";
 
 interface FormData {
 	name: string;
@@ -44,19 +45,30 @@ const NewFriend = () => {
 		// 	id: generateID(),
 
 		// };
-		if (user.id !== undefined) {
-			friend.setReminderTime(
-				user.settings.reminderTime.hour,
-				user.settings.reminderTime.minute
-			);
-		}
-		friend.setNextReminder();
-		addReminder(friend.nextReminder!);
 		addFriend(friend);
-		console.log(friends);
+		// if (user.id !== undefined) {
+		// 	addReminder(
+		// 		newReminder(
+		// 			friend.nextReminderDate,
+		// 			friend.id,
+		// 			friend.name,
+		// 			user.settings.reminderTime
+		// 		)
+		// 	);
+		// }
+
+		//testing
+		const today = new Date();
+		const currentHour = today.getHours();
+		const currentMinute = today.getMinutes();
+		addReminder(
+			newReminder(today, friend.id, friend.name, {
+				hour: currentHour,
+				minute: currentMinute + 1,
+			})
+		);
 		saveToLocal();
 		router.back();
-		console.log(data);
 	};
 
 	const colorScheme = useColorScheme();
@@ -102,7 +114,7 @@ const NewFriend = () => {
 				onSubmit={onSubmit}
 				buttonText='Add Friend'
 				defaultValues={{
-					img: "/assets/images/placeholder.png",
+					img: "",
 					name: "",
 					freq1: 1,
 					freq2: "day",

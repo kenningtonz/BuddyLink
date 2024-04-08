@@ -1,10 +1,15 @@
 import { Text, Layout } from "@/components/Themed";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { sharedStyles as baseStyles } from "@/components/styles";
 import { Platform, Pressable, View } from "react-native";
 import useColorScheme from "@/components/useColorScheme";
 import { Button, ButtonVariants } from "@/components/Button";
-import { useStore, saveToLocal } from "@/classes/userStore";
+import {
+	useStore,
+	saveToLocal,
+	clearLocal,
+	clearStore,
+} from "@/classes/userStore";
 import Dialog from "@/components/Dialog";
 import { useState } from "react";
 import { FormProvider, SubmitHandler, set, useForm } from "react-hook-form";
@@ -18,6 +23,7 @@ export default function Settings() {
 	const [setUser] = useStore((state) => [state.setUser]);
 	const [reminderDialog, setReminderDialog] = useState(false);
 	const [deleteDialog, setDeleteDialog] = useState(false);
+	const changeReminderTime = useStore((state) => state.changeReminderTime);
 	// const [status, setStatus] = useState();
 
 	const colorScheme = useColorScheme();
@@ -42,8 +48,8 @@ export default function Settings() {
 	};
 
 	const onSubmit: SubmitHandler<{ time: time }> = async (form) => {
-		console.log(form);
 		setUser({ ...user, settings: { ...user.settings, reminderTime: form.time } });
+		changeReminderTime(form.time);
 		setReminderDialog(false);
 		saveToLocal();
 	};
@@ -169,7 +175,7 @@ export default function Settings() {
 						color:
 							theme === "light" ? Colors.light.onBackground : Colors.dark.onBackground,
 					}}
-					href='/(onBoarding)/'
+					href='/(onBoarding)/home'
 				>
 					Back to Home
 				</Link>
@@ -185,23 +191,20 @@ export default function Settings() {
 					<Text style={{ fontSize: 20 }}>Are you sure you want to delete?</Text>
 					<View style={{ flexDirection: "row", justifyContent: "space-between" }}>
 						<Button
+							text='No'
+							variant={ButtonVariants.Primary}
+							onPress={() => setDeleteDialog(false)}
+						/>
+						<Button
 							text='Yes'
 							variant={ButtonVariants.Danger}
 							onPress={() => {
-								setDeleteDialog(false);
-								setUser({
-									email: "",
-									isLocal: false,
-									settings: {
-										reminderTime: { hour: 8, minute: 0 },
-										pushNotifications: "",
-									},
-									id: "",
-								});
-								saveToLocal();
+								clearLocal();
+								clearStore();
+								router.replace("/(onBoarding)/home");
+								// setDeleteDialog(false);
 							}}
 						/>
-						<Button text='No' onPress={() => setDeleteDialog(false)} />
 					</View>
 				</Dialog>
 			</View>

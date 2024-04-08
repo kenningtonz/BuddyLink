@@ -4,9 +4,7 @@ import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import { Button, ButtonVariants } from "../Button";
 import { DatePicker } from "../form";
 import { Row } from "../Themed";
-import { LinearGradient } from "expo-linear-gradient";
-import Colors from "@/constants/Colors";
-import useColorScheme from "@/components/useColorScheme";
+
 import { sharedStyles as styles } from "@/components/styles";
 const Page2: React.FC<{
 	next: () => void;
@@ -20,19 +18,8 @@ const Page2: React.FC<{
 		next();
 	};
 
-	const theme = useColorScheme();
-
-	const gradientColors =
-		theme === "light"
-			? [Colors.light.primaryContainer, Colors.light.background]
-			: [Colors.dark.primaryContainer, Colors.dark.background];
 	return (
 		<>
-			<LinearGradient
-				// Background Linear Gradient
-				colors={gradientColors}
-				style={{ position: "absolute", left: 0, right: 0, top: 0, height: "100%" }}
-			/>
 			<Text style={[styles.bigTitle]}>When did you last contact them?</Text>
 			<FormProvider {...methods}>
 				<DatePicker

@@ -76,7 +76,6 @@ export default React.forwardRef<any, Props>(
 					}}
 					onChange={(item) => {
 						field.onChange(item.value);
-						console.log(item.value);
 					}}
 					onFocus={() => setIsFocused(true)}
 					value={field.value}

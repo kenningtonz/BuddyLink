@@ -7,8 +7,6 @@ import { TimeInput } from "../form";
 import { Row } from "../Themed";
 import { time } from "@/classes/time";
 import { sharedStyles as styles } from "@/components/styles";
-import Colors from "@/constants/Colors";
-import { LinearGradient } from "expo-linear-gradient";
 
 const Page5: React.FC<{
 	next: () => void;
@@ -27,20 +25,8 @@ const Page5: React.FC<{
 		setSetting(form.time);
 	};
 
-	const theme = useColorScheme();
-
-	const gradientColors =
-		theme === "light"
-			? [Colors.light.secondaryContainer, Colors.light.background]
-			: [Colors.dark.secondaryContainer, Colors.dark.background];
-
 	return (
 		<>
-			<LinearGradient
-				// Background Linear Gradient
-				colors={gradientColors}
-				style={{ position: "absolute", left: 0, right: 0, top: 0, height: "100%" }}
-			/>
 			<Text style={[styles.bigTitle]}>
 				What time would you like to be reminded?
 			</Text>

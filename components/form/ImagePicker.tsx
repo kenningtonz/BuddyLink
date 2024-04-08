@@ -5,8 +5,10 @@ import { Text } from "../Themed";
 import useColorScheme from "@/components/useColorScheme";
 import { Pressable, View, Image } from "react-native";
 import { sharedFormStyles, darkTheme, lightTheme } from "./styles";
+import { sharedStyles as baseStyles } from "../styles";
 
 import React, { useState } from "react";
+import { FontAwesome6 } from "@expo/vector-icons";
 
 interface Props {
 	name: string;
@@ -38,8 +40,6 @@ export default React.forwardRef<any, Props>(
 				quality: 1,
 			});
 
-			console.log(result);
-
 			if (!result.canceled) {
 				field.onChange(result.assets[0].uri);
 			}
@@ -49,7 +49,25 @@ export default React.forwardRef<any, Props>(
 			<View style={[sharedFormStyles.formField, style]}>
 				<Text style={[sharedFormStyles.label, themeStyles.label]}>{label}</Text>
 				<Pressable onPress={pickImage}>
-					<Image source={{ uri: field.value }} style={sharedFormStyles.image} />
+					{!field.value ? (
+						<View
+							style={[
+								{
+									width: 100,
+									height: 100,
+									borderRadius: 50,
+
+									justifyContent: "center",
+									alignItems: "center",
+								},
+								themeStyles.image,
+							]}
+						>
+							<FontAwesome6 name='user' size={50} />
+						</View>
+					) : (
+						<Image source={{ uri: field.value }} style={sharedFormStyles.image} />
+					)}
 				</Pressable>
 				{error && <Text style={[themeStyles.error]}>{error.message}</Text>}
 			</View>

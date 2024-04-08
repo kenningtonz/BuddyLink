@@ -22,6 +22,7 @@ export const sharedStyles = StyleSheet.create({
 	item: {
 		display: "flex",
 		flexDirection: "row",
+		justifyContent: "center",
 		alignItems: "center",
 		gap: 10,
 		borderRadius: 8,

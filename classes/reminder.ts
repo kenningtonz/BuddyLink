@@ -1,7 +1,13 @@
-import { schedulePushNotification } from "@/utils/notifications";
+import {
+	schedulePushNotification,
+	sendPushNotification,
+} from "@/utils/notifications";
 import { Friend } from "./friend";
-import { time } from "./time";
+import { addDateTime, time } from "./time";
 import { generateID } from "@/utils/generateID";
+import { saveToLocal, useStore } from "./userStore";
+import { Platform } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface Reminder {
 	id: string;
@@ -14,39 +20,65 @@ interface Reminder {
 }
 
 const newReminder = (
-	lastContacted: Date,
+	reminderDate: Date,
 	id: string,
 	name: string,
-	frequency: { unit: number; period: string },
+	// frequency: { unit: number; period: string },
 	reminderTime: time
 ) => {
-	const date = nextReminderDate(lastContacted, frequency);
-	const timeSinceLastContacted = new Date().getTime() - lastContacted.getTime();
+	const date = addDateTime(reminderDate, reminderTime);
+	// const timeSinceLastContacted = new Date().getTime() - lastContacted.getTime();
 	const reminder: Reminder = {
 		id: generateID(10),
 		friendID: id,
-		message: `It'ss been ${new Date(
-			timeSinceLastContacted
-		).toLocaleString()} since you last contacted ${name}!`,
+		message: `It's been a bit since you last contacted ${name}!`,
 		title: `Contact ${name}`,
-		date: new Date(
-			date.getFullYear(),
-			date.getMonth(),
-			date.getDate(),
-			reminderTime.hour,
-			reminderTime.minute
-		),
+		date: date,
 		hasSeen: false,
 	};
 	const secondsTill = new Date().getTime() - reminder.date.getTime();
-	// schedulePushNotification(
-	// 	reminder.title,
-	// 	reminder.message,
-	// 	reminder.date.getTime(),
-	// 	reminder.id
-	// );
 	return reminder;
 };
+
+const checkReminders = (
+	futureReminders: Reminder[],
+	reminderTime: time,
+	addReminder: (reminder: Reminder) => void,
+	moveReminder: (id: string) => void,
+	token: string,
+	friends: Friend[],
+	editFriend: (friend: Friend) => void
+) => {
+	const now = new Date();
+
+	for (const reminder of futureReminders) {
+		if (reminder.date < now) {
+			// sendReminder(reminder);
+			if (Platform.OS != "web") {
+				sendPushNotification(token, reminder);
+				console.log("sent push notification");
+			}
+			moveReminder(reminder.id);
+			const friend = friends.find((f) => f.id === reminder.friendID);
+
+			if (friend) {
+				friend.lastContacted = new Date();
+				friend.nextReminderDate = nextReminderDate(
+					friend.lastContacted,
+					friend.frequency
+				);
+				editFriend(friend);
+				addReminder(
+					newReminder(friend.nextReminderDate, friend.id, friend.name, reminderTime)
+				);
+			}
+		}
+	}
+	console.log("checked reminders");
+};
+
+//reminders  are added to futre,
+//when open app for web, or background for android, check and move to past and send off
 
 function nextReminderDate(
 	lastContacted: Date,
@@ -55,6 +87,7 @@ function nextReminderDate(
 	const unit = frequency.unit;
 	const period = frequency.period;
 	const date = new Date(lastContacted);
+
 	switch (period) {
 		case "day":
 			date.setDate(date.getDate() + unit);
@@ -69,6 +102,10 @@ function nextReminderDate(
 			date.setFullYear(date.getFullYear() + unit);
 			break;
 	}
+
+	if (date < new Date()) {
+		date.setDate(date.getDate() + 1);
+	}
 	return date;
 }
 
@@ -78,7 +115,7 @@ function nextReminderDate(
 // 	manual,
 // }
 
-export { Reminder, newReminder };
+export { Reminder, newReminder, nextReminderDate, checkReminders };
 
 //type of reminders
 //send message for them? - connect to contactMethods - update last contacted

@@ -1,19 +1,22 @@
 import React from "react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import { Button, ButtonVariants } from "../Button";
-import { Dropdown } from "../form";
+import { Dropdown, sharedFormStyles, darkTheme, lightTheme } from "../form";
 import { Row, Text } from "../Themed";
 import { sharedStyles as styles } from "@/components/styles";
-import useColorScheme from "@/components/useColorScheme";
-import Colors from "@/constants/Colors";
-import { LinearGradient } from "expo-linear-gradient";
+import useColorScheme from "../useColorScheme";
 
 const Page3: React.FC<{
 	next: () => void;
 	back: () => void;
 	setFriend: (value: { unit: number; period: string }) => void;
 }> = ({ next, back, setFriend }) => {
-	const { ...methods } = useForm<{ freq1: number; freq2: string }>({});
+	const { ...methods } = useForm<{ freq1: number; freq2: string }>({
+		defaultValues: {
+			freq1: 1,
+			freq2: "day",
+		},
+	});
 	const onSubmit: SubmitHandler<{ freq1: number; freq2: string }> = async (
 		form
 	) => {
@@ -22,20 +25,11 @@ const Page3: React.FC<{
 		next();
 	};
 
-	const theme = useColorScheme();
-
-	const gradientColors =
-		theme === "light"
-			? [Colors.light.secondaryContainer, Colors.light.background]
-			: [Colors.dark.secondaryContainer, Colors.dark.background];
+	const colorScheme = useColorScheme();
+	const themeStyles = colorScheme === "dark" ? darkTheme : lightTheme;
 
 	return (
 		<>
-			<LinearGradient
-				// Background Linear Gradient
-				colors={gradientColors}
-				style={{ position: "absolute", left: 0, right: 0, top: 0, height: "100%" }}
-			/>
 			<Text style={[styles.bigTitle]}>
 				How often would you like to contact them?
 			</Text>
@@ -43,25 +37,26 @@ const Page3: React.FC<{
 				<Row
 					style={{
 						justifyContent: "space-around",
+						marginBottom: 10,
+
+						alignItems: "center",
 					}}
 				>
 					<Dropdown
 						name='freq1'
-						customStyle={{ width: 150 }}
+						customStyle={{ width: 100 }}
 						error={methods.formState.errors.freq1}
 						rules={{ required: "Frequency is required" }}
-						label=''
 						data={[
 							{ label: "once", value: 1 },
 							{ label: "twice", value: 2 },
 							{ label: "thrice", value: 3 },
-							{ label: "four times", value: 4 },
 						]}
 					/>
-					<Text>per</Text>
+					<Text style={[sharedFormStyles.label, themeStyles.label]}>a</Text>
 					<Dropdown
 						name='freq2'
-						customStyle={{ width: 150 }}
+						customStyle={{ width: 100 }}
 						error={methods.formState.errors.freq2}
 						rules={{ required: "Frequency is required" }}
 						data={[

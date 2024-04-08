@@ -64,14 +64,18 @@ export async function registerForPushNotificationsAsync() {
 	return token;
 }
 
-export async function sendPushNotification(expoPushToken: string) {
+export async function sendPushNotification(
+	expoPushToken: string,
+	reminder: Reminder
+) {
 	const message = {
 		to: expoPushToken,
 		sound: "default",
-		title: "Original Title",
-		body: "And here is the body!",
-		data: { someData: "goes here" },
+		title: reminder.title,
+		body: reminder.message,
+		data: { id: reminder.id },
 	};
+	console.log(message);
 
 	await fetch("https://exp.host/--/api/v2/push/send", {
 		method: "POST",

@@ -19,8 +19,9 @@ enum FriendType {
 
 // }
 import { FontAwesome } from "@expo/vector-icons";
-import { Reminder, newReminder } from "./reminder";
+import { Reminder, nextReminderDate } from "./reminder";
 import { generateID } from "@/utils/generateID";
+import { addDateTime } from "./time";
 
 interface ContactMethod {
 	name: string;
@@ -78,8 +79,8 @@ interface Friend {
 	lastContacted: Date;
 	frequency: Frequency;
 
-	reminderTime?: { hour: number; minute: number };
-	nextReminder?: Reminder;
+	// reminderTime?: { hour: number; minute: number };
+	nextReminderDate: Date;
 	method?: ContactMethod;
 	birthday?: Date;
 	img?: string;
@@ -99,21 +100,27 @@ class Friend {
 		this.frequency = frequency;
 		this.lastContacted = lastContacted;
 		this.id = generateID();
+		this.nextReminderDate = nextReminderDate(this.lastContacted, this.frequency);
 	}
 
-	setReminderTime(hour: number, minute: number) {
-		this.reminderTime = { hour, minute };
-	}
+	// setReminderTime(hour: number, minute: number) {
+	// 	this.reminderTime = { hour, minute };
+	// }
 
-	setNextReminder() {
-		this.nextReminder = newReminder(
-			this.lastContacted,
-			this.id,
-			this.name,
-			this.frequency,
-			this.reminderTime ?? { hour: 9, minute: 0 }
-		);
-	}
+	// setNextReminder() {
+	// 	this.nextReminderDate = addDateTime(
+
+	// 		this.reminderTime ?? { hour: 9, minute: 0 }
+	// 	);
+
+	// this.nextReminder = newReminder(
+	// 	this.lastContacted,
+	// 	this.id,
+	// 	this.name,
+	// 	this.frequency,
+	// 	this.reminderTime ?? { hour: 9, minute: 0 }
+	// );
+	// }
 }
 
 // class Friend {

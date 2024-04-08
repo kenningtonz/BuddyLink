@@ -22,10 +22,7 @@ const TimeSelector: React.FC<{
 }) => {
 	const [hour, setHour] = useState(value.hour);
 	const [minute, setMinute] = useState(value.minute);
-	// const [isAM, setIsAM] = useState(value.hour < 12);
 	const isAM = value.hour < 12 || value.hour === 24;
-	// console.log(value.hour < 12);
-	console.log("hour", hour, "minute", minute, "isAM", isAM);
 
 	const onChangeHour = (newValue: number) => {
 		setHour(newValue);

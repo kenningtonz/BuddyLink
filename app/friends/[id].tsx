@@ -56,12 +56,11 @@ const FriendPage = () => {
 		friend.name = data.name;
 		friend.frequency = { unit: data.freq1, period: data.freq2 };
 		friend.img = data.img;
-		friend.lastContacted = data.lastContacted;
+		friend.lastContacted = new Date(data.lastContacted);
 
 		editFriend(friend);
 		setIsEditing(false);
 		saveToLocal();
-		console.log(data);
 	};
 
 	return (
@@ -132,7 +131,7 @@ const FriendPage = () => {
 					<FriendForm
 						buttonText='Save'
 						defaultValues={{
-							img: friend.img ?? "/assets/images/placeholder.png",
+							img: friend.img ?? "",
 							name: friend.name,
 
 							method: friend.method?.id,
@@ -164,7 +163,10 @@ const FriendPage = () => {
 									width: 100,
 									height: 100,
 									borderRadius: 50,
-									backgroundColor: Colors.light.secondaryContainer,
+									backgroundColor:
+										theme === "light"
+											? Colors.light.secondaryContainer
+											: Colors.dark.secondaryContainer,
 									justifyContent: "center",
 									alignItems: "center",
 								}}
@@ -176,7 +178,8 @@ const FriendPage = () => {
 						<Text style={{ fontSize: 30 }}>{friend.name}</Text>
 					</Row>
 					<Text style={baseStyles.label}>Next Reminder:</Text>
-					<Text>{friend.nextReminder?.toString()} - </Text>
+					{/* <Text>{typeof friend.nextReminderDate}</Text> */}
+					{/* <Text>{relativeDate(friend.nextReminderDate)} - </Text> */}
 					{friend.method ? (
 						<Text style={baseStyles.label}>Preferred Contact Method:</Text>
 					) : null}

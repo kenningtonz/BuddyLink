@@ -1,11 +1,9 @@
 import React from "react";
-import { Text } from "@/components/Themed";
+import { Row, Text } from "@/components/Themed";
 import { Button, ButtonVariants } from "../Button";
-import { time } from "@/classes/time";
+import { time, timeToString } from "@/classes/time";
 import { sharedStyles as styles } from "../styles";
-import useColorScheme from "@/components/useColorScheme";
-import Colors from "@/constants/Colors";
-import { LinearGradient } from "expo-linear-gradient";
+import { View } from "react-native";
 
 const Page6: React.FC<{
 	friend: {
@@ -15,35 +13,67 @@ const Page6: React.FC<{
 	};
 	userSettings: { reminderTime: time };
 	next: () => void;
-}> = ({ friend, userSettings, next }) => {
-	const theme = useColorScheme();
-
-	const gradientColors =
-		theme === "light"
-			? [Colors.light.primaryContainer, Colors.light.background]
-			: [Colors.dark.primaryContainer, Colors.dark.background];
-
+	back: () => void;
+}> = ({ friend, userSettings, next, back }) => {
 	return (
-		<>
-			<LinearGradient
-				// Background Linear Gradient
-				colors={gradientColors}
-				style={{ position: "absolute", left: 0, right: 0, top: 0, height: "100%" }}
-			/>
-			<Text style={[styles.bigTitle]}>Review</Text>
-			<Text>Name: {friend.name}</Text>
-			<Text>Last Contacted: {friend.lastContacted.toLocaleString()}</Text>
-			<Text>
-				Frequency: {friend.freq.unit} {friend.freq.period}
-			</Text>
+		<View>
+			<Text style={[styles.bigTitle, { marginBottom: 30 }]}>Friend Review</Text>
 
-			<Text>
-				Reminder Time: {userSettings.reminderTime.hour} :{" "}
-				{userSettings.reminderTime.minute}{" "}
-			</Text>
+			<View style={{ marginBottom: 30 }}>
+				<Text style={{ fontSize: 20, fontFamily: "Fredoka-Medium" }}>Name:</Text>
+				<Text style={{ fontSize: 20 }}>{friend.name}</Text>
+			</View>
+			{/* <Text>Last Contacted: {friend.lastContacted.toLocaleString()}</Text> */}
+			<View style={{ marginBottom: 30 }}>
+				<Text style={{ fontSize: 20, fontFamily: "Fredoka-Medium" }}>
+					Last Contacted:
+				</Text>
+				<Text style={{ fontSize: 20 }}>
+					{friend.lastContacted.toLocaleString("en-CA", {
+						month: "long",
+						year: "numeric",
+						day: "numeric",
+					})}
+				</Text>
+			</View>
+			<View style={{ marginBottom: 30 }}>
+				<Text style={{ fontSize: 20, fontFamily: "Fredoka-Medium" }}>
+					Frequency of Reminders:
+				</Text>
+				<Text style={{ fontSize: 20 }}>
+					{friend.freq.unit == 1
+						? "Once"
+						: friend.freq.unit == 2
+						? "Twice"
+						: "Thrice"}{" "}
+					a {friend.freq.period}
+				</Text>
+			</View>
 
-			<Button text='Looks Good!' variant={ButtonVariants.Primary} onPress={next} />
-		</>
+			<View style={{ marginBottom: 30 }}>
+				<Text style={{ fontSize: 20, fontFamily: "Fredoka-Medium" }}>
+					Reminder Time
+				</Text>
+				<Text style={{ fontSize: 20, marginBottom: 10 }}>
+					{timeToString(userSettings.reminderTime)}
+				</Text>
+			</View>
+
+			<Row style={{ gap: 8 }}>
+				<Button
+					style={{ flex: 1 }}
+					variant={ButtonVariants.Ghost}
+					icon='chevron-left'
+					onPress={back}
+				/>
+				<Button
+					style={{ flex: 5 }}
+					text='Looks Good!'
+					variant={ButtonVariants.Primary}
+					onPress={next}
+				/>
+			</Row>
+		</View>
 	);
 };
 

@@ -56,7 +56,6 @@ export default React.forwardRef<any, Props>(
 							maxDate={new Date(new Date().getTime() + 1000 * 60 * 60)}
 							onChange={(params) => {
 								field.onChange(params.date);
-								console.log(new Date(params.date as string));
 								setOpen(false);
 							}}
 							date={field.value}
