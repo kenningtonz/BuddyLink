@@ -7,10 +7,13 @@ import {
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useRef, useState } from "react";
+import * as Notifications from "expo-notifications";
 
-import { Pressable, AppState, Platform, useColorScheme } from "react-native";
+import { Pressable, useColorScheme } from "react-native";
 import { Stack, useRouter } from "expo-router";
 import { useStore, loadFromLocal } from "@/classes/userStore";
+import { registerForPushNotificationsAsync } from "@/utils/notifications";
+import { Subscription } from "expo-notifications";
 
 export {
 	// Catch any errors thrown by the Layout component.
@@ -19,11 +22,19 @@ export {
 
 export const unstable_settings = {
 	// Ensure that reloading on `/modal` keeps a back button present.
-	initialRouteName: "(onBoarding)",
+	initialRouteName: "(onBoarding)/index",
 };
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
+
+Notifications.setNotificationHandler({
+	handleNotification: async () => ({
+		shouldShowAlert: true,
+		shouldPlaySound: false,
+		shouldSetBadge: false,
+	}),
+});
 
 export default function RootLayout() {
 	const router = useRouter();
@@ -33,6 +44,7 @@ export default function RootLayout() {
 
 	const getUserFromStorage = async () => {
 		try {
+			console.log(exists);
 			if (typeof window !== "undefined") {
 				loadFromLocal().then((exists) => {
 					setExists(exists);
@@ -75,6 +87,49 @@ export default function RootLayout() {
 		// }
 	};
 
+	const [expoPushToken, setExpoPushToken] = useState<string | undefined>("");
+	const [notification, setNotification] = useState<Notifications.Notification>();
+	const notificationListener = useRef<Subscription>();
+	const responseListener = useRef<Subscription>();
+
+	useEffect(() => {
+		registerForPushNotificationsAsync().then((token) => setExpoPushToken(token));
+
+		// This listener is fired whenever a notification is received while the app is foregrounded
+		notificationListener.current = Notifications.addNotificationReceivedListener(
+			(notification: any) => {
+				setNotification(notification);
+			}
+		);
+
+		// This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed)
+		responseListener.current =
+			Notifications.addNotificationResponseReceivedListener((response: any) => {
+				console.log(response);
+				const {
+					notification: {
+						request: {
+							content: {
+								data: { id },
+							},
+						},
+					},
+				} = response;
+				if (id) {
+					router.push(`/reminder/${id}`);
+				}
+			});
+
+		return () => {
+			if (notificationListener.current) {
+				Notifications.removeNotificationSubscription(notificationListener.current);
+			}
+			if (responseListener.current) {
+				Notifications.removeNotificationSubscription(responseListener.current);
+			}
+		};
+	}, []);
+
 	const [fontsLoaded, fontError] = useFonts({
 		Fredoka: require("@/assets/fonts/Fredoka-Regular.ttf"),
 		"Fredoka-Bold": require("@/assets/fonts/Fredoka-Bold.ttf"),
@@ -91,13 +146,14 @@ export default function RootLayout() {
 
 	useEffect(() => {
 		getUserFromStorage();
+		console.log(exists);
 		if (fontsLoaded && isReady) {
 			console.log(exists);
 			SplashScreen.hideAsync();
 			if (exists) {
 				router.push("/(tabs)");
 			} else {
-				router.push("/(onBoarding)/onBoarding");
+				router.push("/(onBoarding)/");
 			}
 		}
 	}, [isReady, fontsLoaded]);
@@ -111,13 +167,14 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
 	const colorScheme = useColorScheme();
+	console.log(colorScheme);
 
 	const router = useRouter();
 
 	return (
 		<ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
 			<Stack>
-				<Stack.Screen name='(onBoarding)' options={{ headerShown: false }} />
+				<Stack.Screen name='(onBoarding)/index' options={{ headerShown: false }} />
 				<Stack.Screen name='(tabs)' options={{ headerShown: false }} />
 				<Stack.Screen name='friends/[id]' options={{}} />
 				<Stack.Screen name='reminder/[id]' options={{}} />
@@ -125,13 +182,6 @@ function RootLayoutNav() {
 					name='(modals)/newFriend'
 					options={{
 						presentation: "modal",
-						title: "Add New Friend",
-						headerTitleStyle: { fontFamily: "Fredoka" },
-						headerLeft: () => (
-							<Pressable onPress={() => router.back()}>
-								<FontAwesome name='close' size={25} />
-							</Pressable>
-						),
 					}}
 				/>
 			</Stack>

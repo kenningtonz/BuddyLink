@@ -1,15 +1,9 @@
 import * as React from "react";
-import {
-	View,
-	TextInput,
-	Pressable,
-	TextInputProps,
-	useColorScheme,
-} from "react-native";
+import { View, TextInput, Pressable, TextInputProps } from "react-native";
 import { useController, useFormContext, FieldError } from "react-hook-form";
 import { Text } from "../Themed";
 import { sharedFormStyles, darkTheme, lightTheme } from "./styles";
-
+import useColorScheme from "@/components/useColorScheme";
 interface Props extends TextInputProps {
 	name: string;
 	label?: string;
@@ -45,7 +39,7 @@ export default React.forwardRef<any, Props>(
 					{...inputProps}
 					style={[
 						sharedFormStyles.input,
-						themeStyles.label,
+						themeStyles.input,
 						isFocused ? themeStyles.inputFocused : {},
 					]}
 				/>

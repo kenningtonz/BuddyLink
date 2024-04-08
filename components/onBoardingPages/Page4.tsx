@@ -1,12 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 import { Text } from "react-native";
 import { Button, ButtonVariants } from "../Button";
+import * as Notifications from "expo-notifications";
 
 const Page4: React.FC<{
 	next: () => void;
 	back: () => void;
-	setSetting: (value: boolean) => void;
+	setSetting: (value: string) => void;
 }> = ({ next, back, setSetting }) => {
+	const [status, setStatus] = useState<string | null>(null);
+
+	const requestPermissions = async () => {
+		const { status } = await Notifications.requestPermissionsAsync();
+		setStatus(status);
+		console.log(status);
+		const { data: token } = await Notifications.getExpoPushTokenAsync();
+		setSetting(token);
+		next();
+	};
+
 	return (
 		<>
 			<Text>Enable Push Notifications? </Text>
@@ -14,15 +26,15 @@ const Page4: React.FC<{
 				text='Yes'
 				variant={ButtonVariants.Primary}
 				onPress={() => {
-					setSetting(true);
-					next();
+					requestPermissions();
+					// next();
 				}}
 			/>
 			<Button
 				text='Continue without'
 				variant={ButtonVariants.Primary}
 				onPress={() => {
-					setSetting(false);
+					setSetting("");
 					next();
 				}}
 			/>

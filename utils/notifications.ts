@@ -3,19 +3,31 @@ import * as Device from "expo-device";
 import { Platform } from "react-native";
 import Constants from "expo-constants";
 
-export async function schedulePushNotification() {
+import { Reminder } from "@/classes/reminder";
+
+export async function schedulePushNotification(
+	title: string,
+	body: string,
+	seconds: number,
+	id: string
+) {
 	await Notifications.scheduleNotificationAsync({
 		content: {
-			title: "You've got mail! 📬",
-			body: "Here is the notification body",
-			data: { data: "goes here" },
+			title: title,
+			body: body,
+			data: { id },
 		},
-		trigger: { seconds: 2 },
+		trigger: { seconds: seconds },
 	});
 }
 
 export async function registerForPushNotificationsAsync() {
 	let token;
+
+	//if platform is web return
+	if (Platform.OS === "web") {
+		return;
+	}
 
 	if (Platform.OS === "android") {
 		await Notifications.setNotificationChannelAsync("default", {

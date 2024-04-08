@@ -15,13 +15,13 @@ const sharedFormStyles = StyleSheet.create({
 	},
 	textStyle: {
 		fontFamily: "Fredoka",
-		padding: 8,
+		// padding: 8,
 	},
 	placeholderStyle: {
 		fontFamily: "Fredoka",
 	},
 	dropdown: {
-		padding: 4,
+		// padding: 4,
 		borderRadius: 8,
 	},
 	container: {
@@ -45,7 +45,7 @@ const sharedFormStyles = StyleSheet.create({
 		padding: 12,
 		borderRadius: 8,
 		height: 50,
-		backgroundColor: "white",
+
 		borderWidth: 1,
 		borderColor: "transparent",
 	},
@@ -55,6 +55,9 @@ const sharedFormStyles = StyleSheet.create({
 	button: {
 		borderRadius: 8,
 		padding: 6,
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center",
 	},
 });
 
@@ -74,8 +77,9 @@ const lightTheme = StyleSheet.create({
 		borderColor: Colors.light.primary,
 	},
 	input: {
-		color: Colors.light.onPrimaryContainer,
-		borderColor: "transparent",
+		borderColor: Colors.light.primaryContainer,
+		color: Colors.light.onBackground,
+		backgroundColor: Colors.light.background,
 	},
 	label: {
 		color: Colors.light.primary,
@@ -85,9 +89,6 @@ const lightTheme = StyleSheet.create({
 	},
 	button: {
 		backgroundColor: Colors.light.primaryContainer,
-		display: "flex",
-		alignItems: "center",
-		justifyContent: "center",
 	},
 });
 
@@ -103,12 +104,13 @@ const darkTheme = StyleSheet.create({
 		backgroundColor: Colors.dark.primaryContainer,
 	},
 	inputFocused: {
-		borderWidth: 3,
+		borderWidth: 2,
 		borderColor: Colors.dark.primary,
 	},
 	input: {
-		color: Colors.dark.onPrimaryContainer,
-		borderColor: Colors.dark.primary,
+		color: Colors.dark.onBackground,
+		backgroundColor: Colors.dark.background,
+		borderColor: Colors.dark.primaryContainer,
 	},
 	label: {
 		color: Colors.dark.primary,

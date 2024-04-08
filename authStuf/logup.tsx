@@ -5,10 +5,10 @@ import { Layout, Row, Text } from "@/components/Themed";
 import { useStore } from "@/classes/userStore";
 import { useRouter } from "expo-router";
 import { FormProvider, useForm, SubmitHandler } from "react-hook-form";
-
+import { createUser } from "@/classes/firestore";
 import { Button, ButtonVariants } from "@/components/Button";
 
-import { formStyles, TextInput, Dropdown } from "@/components/form";
+import { TextInput, Dropdown } from "@/components/form";
 
 interface FormData {
 	email: string;
@@ -24,9 +24,18 @@ const LogUp = () => {
 	const signUpWithEmail: SubmitHandler<FormData> = async (form) => {
 		setLoading(true);
 		console.log(form);
+		const data = await createUser(form.email, form.password);
+
+		if (data.error) {
+			Alert.alert(data.message);
+			setLoading(false);
+			return;
+		} else {
+			router.push("/(tabs)");
+		}
 
 		// router.push("/(tabs)");
-		setLoading(false);
+		// setLoading(false);
 	};
 
 	return (

@@ -1,10 +1,9 @@
 import React from "react";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-import { Link, Tabs } from "expo-router";
-import { Pressable } from "react-native";
+import { Tabs } from "expo-router";
 
 import Colors from "@/constants/Colors";
-import { useColorScheme } from "@/components/useColorScheme";
+import useColorScheme from "@/components/useColorScheme";
 import { useClientOnlyValue } from "@/components/useClientOnlyValue";
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
@@ -21,17 +20,25 @@ export default function TabLayout() {
 	return (
 		<Tabs
 			screenOptions={{
-				tabBarActiveTintColor: Colors[colorScheme ?? "light"].secondary,
-				tabBarInactiveTintColor: Colors[colorScheme ?? "light"].secondaryContainer,
+				tabBarActiveTintColor:
+					colorScheme === "light" ? Colors.light.secondary : Colors.dark.secondary,
+				tabBarInactiveTintColor:
+					colorScheme === "light"
+						? Colors.light.secondaryContainer
+						: Colors.dark.secondaryContainer,
 				// Disable the static render of the header on web
 				// to prevent a hydration error in React Navigation v6.
 				headerShown: useClientOnlyValue(false, true),
 				headerTitleAlign: "center",
 				headerStyle: {
-					backgroundColor: Colors[colorScheme ?? "light"].background,
+					backgroundColor:
+						colorScheme === "light"
+							? Colors.light.background
+							: Colors.dark.background,
 					borderWidth: 0,
 				},
-				headerTintColor: Colors[colorScheme ?? "light"].onSecondaryContainer,
+				headerTintColor:
+					colorScheme === "light" ? Colors.light.secondary : Colors.dark.secondary,
 				headerTitleStyle: {
 					fontSize: 20,
 					fontFamily: "Fredoka-Medium",
@@ -40,7 +47,10 @@ export default function TabLayout() {
 				tabBarStyle: {
 					height: 70,
 					borderWidth: 0,
-					backgroundColor: Colors[colorScheme ?? "light"].background,
+					backgroundColor:
+						colorScheme === "light"
+							? Colors.light.background
+							: Colors.dark.background,
 				},
 			}}
 		>

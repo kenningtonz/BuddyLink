@@ -2,8 +2,8 @@ import * as ImagePicker from "expo-image-picker";
 
 import { useController, useFormContext, FieldError } from "react-hook-form";
 import { Text } from "../Themed";
-
-import { Pressable, View, Image, useColorScheme } from "react-native";
+import useColorScheme from "@/components/useColorScheme";
+import { Pressable, View, Image } from "react-native";
 import { sharedFormStyles, darkTheme, lightTheme } from "./styles";
 
 import React, { useState } from "react";
@@ -14,12 +14,13 @@ interface Props {
 	error?: FieldError | undefined;
 	rules?: any;
 	defaultValue?: string;
+	style?: any;
 }
 
 // https://docs.expo.dev/versions/latest/sdk/imagepicker/#imagepickerresult
 export default React.forwardRef<any, Props>(
 	(props, ref): React.ReactElement => {
-		const { label, rules, name, error, ...imageProps } = props;
+		const { label, rules, name, error, style, ...imageProps } = props;
 		const formContext = useFormContext();
 		const { formState } = formContext;
 		const { field } = useController({ name, rules });
@@ -45,7 +46,7 @@ export default React.forwardRef<any, Props>(
 		};
 
 		return (
-			<View style={[sharedFormStyles.formField]}>
+			<View style={[sharedFormStyles.formField, style]}>
 				<Text style={[sharedFormStyles.label, themeStyles.label]}>{label}</Text>
 				<Pressable onPress={pickImage}>
 					<Image source={{ uri: field.value }} style={sharedFormStyles.image} />

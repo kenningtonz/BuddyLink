@@ -4,7 +4,7 @@ import { Button, ButtonVariants } from "../Button";
 import { Dropdown } from "../form";
 import { Row, Text } from "../Themed";
 import { sharedStyles as styles } from "@/components/styles";
-import { useColorScheme } from "react-native";
+import useColorScheme from "@/components/useColorScheme";
 import Colors from "@/constants/Colors";
 import { LinearGradient } from "expo-linear-gradient";
 

@@ -1,7 +1,7 @@
 import React from "react";
-
+import useColorScheme from "@/components/useColorScheme";
 import { sharedStyles as baseStyles } from "./styles";
-import { Pressable, useColorScheme, StyleSheet } from "react-native";
+import { Pressable, StyleSheet } from "react-native";
 import { Modal, View } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";

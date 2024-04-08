@@ -1,5 +1,5 @@
-export function generateID(): string {
-	const length = 8;
+export function generateID(length: number = 8): string {
+	// const length = 8;
 	let result = "";
 	const characters =
 		"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";

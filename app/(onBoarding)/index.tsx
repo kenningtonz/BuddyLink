@@ -15,9 +15,10 @@ import {
 } from "@/components/onBoardingPages";
 import { time } from "@/classes/time";
 import { generateID } from "@/utils/generateID";
+import { Friend } from "@/classes/friend";
 
 export default function OnBoarding() {
-	// const user = useStore((state) => state.user);
+	const user = useStore((state) => state.user);
 
 	const addFriend = useStore((state) => state.addFriend);
 	const router = useRouter();
@@ -37,26 +38,32 @@ export default function OnBoarding() {
 
 	const [userSettings, setUserSettings] = useState<{
 		reminderTime: time;
-		pushNotifications: boolean;
+		pushNotifications: string;
 	}>({
 		reminderTime: { hour: 9, minute: 0 },
-		pushNotifications: true,
+		pushNotifications: "",
 	});
 
-	const complete = (isGuest: boolean) => {
-		addFriend({
+	const complete = () => {
+		const newFriend = new Friend(friend.name, friend.lastContacted, friend.freq);
+		setUser({
+			email: "",
+			isLocal: true,
+			settings: userSettings,
 			id: generateID(),
-			name: friend.name,
-			lastContacted: friend.lastContacted,
-			frequency: friend.freq,
 		});
-		setUser({ isLocal: isGuest, settings: userSettings, id: generateID() });
+		newFriend.setReminderTime(
+			userSettings.reminderTime.hour,
+			userSettings.reminderTime.minute
+		);
+		newFriend.setNextReminder();
+		addFriend(newFriend);
 		saveToLocal();
-		if (isGuest) {
-			router.push("/(tabs)");
-		} else {
-			router.push("/(onBoarding)/logup");
-		}
+		// if (isGuest) {
+		router.push("/(tabs)");
+		// } else {
+		// 	router.push("/(onBoarding)/logup");
+		// }
 	};
 
 	const next = () => {
@@ -78,13 +85,14 @@ export default function OnBoarding() {
 							text='Add your First Friend'
 							onPress={() => setOnBoardPage(onBoardPage + 1)}
 						/>
-						<Button
-							variant={ButtonVariants.Secondary}
-							text='Log in'
-							onPress={() => {
-								router.push("/(onBoarding)/login");
-							}}
-						/>
+
+						{user.id ? (
+							<Button
+								text='Continue from Saved Data'
+								variant={ButtonVariants.Primary}
+								onPress={() => router.push("/(tabs)")}
+							/>
+						) : null}
 					</>
 				) : null}
 
@@ -115,16 +123,16 @@ export default function OnBoarding() {
 						}}
 					/>
 				) : null}
-				{/* {onBoardPage == 4 ? (
+				{onBoardPage == 4 ? (
 					<Page4
-						setSetting={(value: boolean) =>
+						setSetting={(value: string) =>
 							setUserSettings({ ...userSettings, pushNotifications: value })
 						}
 						back={back}
 						next={next}
 					/>
-				) : null} */}
-				{onBoardPage == 4 ? (
+				) : null}
+				{onBoardPage == 5 ? (
 					<Page5
 						setSetting={(value: time) =>
 							setUserSettings({ ...userSettings, reminderTime: value })
@@ -133,11 +141,11 @@ export default function OnBoarding() {
 						next={next}
 					/>
 				) : null}
-				{onBoardPage == 5 ? (
-					<Page6 friend={friend} userSettings={userSettings} next={next} />
+				{onBoardPage == 6 ? (
+					<Page6 friend={friend} userSettings={userSettings} next={complete} />
 				) : null}
 
-				{onBoardPage == 6 ? (
+				{/* {onBoardPage == 7 ? (
 					<>
 						<Text style={[styles.bigTitle]}>
 							Would you like to create an account to cloud save?
@@ -153,7 +161,7 @@ export default function OnBoarding() {
 							onPress={() => complete(true)}
 						/>
 					</>
-				) : null}
+				) : null} */}
 			</Layout>
 		</>
 	);

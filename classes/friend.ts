@@ -19,6 +19,8 @@ enum FriendType {
 
 // }
 import { FontAwesome } from "@expo/vector-icons";
+import { Reminder, newReminder } from "./reminder";
+import { generateID } from "@/utils/generateID";
 
 interface ContactMethod {
 	name: string;
@@ -66,17 +68,52 @@ interface Frequency {
 // 	phone: string;
 // }
 
+//friend gets created
+//next reminder is created
+//when reminder is sent, next reminder is created
+
 interface Friend {
 	id: string;
 	name: string;
 	lastContacted: Date;
 	frequency: Frequency;
+
+	reminderTime?: { hour: number; minute: number };
+	nextReminder?: Reminder;
 	method?: ContactMethod;
 	birthday?: Date;
 	img?: string;
 	type?: FriendType;
 	notes?: string;
 	nickname?: string;
+}
+
+class Friend {
+	notes?: string;
+	nickname?: string;
+	img?: string;
+	birthday?: Date;
+
+	constructor(name: string, lastContacted: Date, frequency: Frequency) {
+		this.name = name;
+		this.frequency = frequency;
+		this.lastContacted = lastContacted;
+		this.id = generateID();
+	}
+
+	setReminderTime(hour: number, minute: number) {
+		this.reminderTime = { hour, minute };
+	}
+
+	setNextReminder() {
+		this.nextReminder = newReminder(
+			this.lastContacted,
+			this.id,
+			this.name,
+			this.frequency,
+			this.reminderTime ?? { hour: 9, minute: 0 }
+		);
+	}
 }
 
 // class Friend {
@@ -133,4 +170,4 @@ interface Friend {
 // 	}
 // }
 
-export { Friend, FriendType, ContactMethod, contactMethods, Frequency };
+export { Friend, Frequency };

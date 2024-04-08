@@ -7,8 +7,7 @@ import { Row } from "../Themed";
 import { sharedStyles as styles } from "@/components/styles";
 import { LinearGradient } from "expo-linear-gradient";
 import Colors from "@/constants/Colors";
-import { useColorScheme } from "react-native";
-
+import useColorScheme from "@/components/useColorScheme";
 const Page1: React.FC<{
 	next: () => void;
 	back: () => void;

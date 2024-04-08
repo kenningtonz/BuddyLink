@@ -5,7 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Friend } from "./friend";
 
 interface UserState {
-	user: User | null;
+	user: User;
 	setUser: (user: User) => void;
 }
 
@@ -23,7 +23,17 @@ interface FriendState {
 }
 
 const useStore = create<UserState & FriendState & ReminderState>((set) => ({
-	user: null,
+	user: {
+		id: "",
+		isLocal: true,
+		email: null,
+		settings: {
+			theme: "light",
+			pushNotifications: "true",
+			reminderTime: { hour: 9, minute: 0 },
+		},
+	},
+
 	setUser: (user) => set({ user }),
 
 	friends: [],
@@ -51,12 +61,22 @@ const useStore = create<UserState & FriendState & ReminderState>((set) => ({
 		set((state) => ({
 			reminders: state.reminders.map((r) => {
 				if (r.id === reminder.id) {
-					return { ...r, seen: true };
+					return { ...r, hasSeen: true };
 				}
 				return r;
 			}),
 		})),
 }));
+
+export function clearLocal() {
+	AsyncStorage.removeItem("reminders");
+	AsyncStorage.removeItem("user");
+	AsyncStorage.removeItem("friends");
+}
+
+export function clearStore() {
+	useStore.setState({ user: {} as User, friends: [], reminders: [] });
+}
 
 export function saveToLocal() {
 	const reminders = useStore.getState().reminders;

@@ -1,5 +1,4 @@
-import { Stack, router, useRouter } from "expo-router";
-import { useStore } from "@/classes/userStore";
+import { Stack } from "expo-router";
 
 export default function AuthLayout() {
 	return (

@@ -4,7 +4,8 @@ import { Text } from "../Themed";
 import TimeSelector from "./TimePicker/TimeSelector";
 import { time } from "@/classes/time";
 import { StyleSheet } from "react-native";
-import { Pressable, View, useColorScheme } from "react-native";
+import { Pressable, View } from "react-native";
+import useColorScheme from "@/components/useColorScheme";
 import { sharedFormStyles, darkTheme, lightTheme } from "./styles";
 
 import React, { useState } from "react";

@@ -1,5 +1,6 @@
 import React from "react";
-import { Text, useColorScheme } from "react-native";
+import { Text } from "react-native";
+import useColorScheme from "@/components/useColorScheme";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import { Button, ButtonVariants } from "../Button";
 import { TimeInput } from "../form";

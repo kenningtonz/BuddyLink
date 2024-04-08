@@ -1,18 +1,6 @@
 import { Row } from "@/components/Themed";
 import React, { useState } from "react";
-import {
-	FormProvider,
-	useForm,
-	SubmitHandler,
-	SubmitErrorHandler,
-} from "react-hook-form";
-import {
-	Friend,
-	FriendType,
-	ContactMethod,
-	contactMethods,
-	Frequency,
-} from "@/classes/friend";
+import { FormProvider, useForm, SubmitHandler } from "react-hook-form";
 
 import { Button, ButtonVariants } from "@/components/Button";
 
@@ -27,6 +15,7 @@ import {
 } from "@/components/form";
 import { Text } from "@/components/Themed";
 import { sharedStyles as baseStyles } from "@/components/styles";
+import { useColorScheme } from "react-native";
 
 // interface FormData {
 // 	name: string;
@@ -60,14 +49,18 @@ export default React.forwardRef<any, Props>(
 			defaultValues: defaultValues,
 		});
 
+		const colorScheme = useColorScheme();
+		const themeStyles = colorScheme === "dark" ? darkTheme : lightTheme;
+
 		return (
 			<FormProvider {...methods}>
 				<>
 					<ImagePicker
 						name='img'
-						label='Image'
+						style={{ justifyContent: "center", alignItems: "center" }}
+						// label='Image'
 						error={methods.formState.errors.img}
-						rules={{ required: "Image is required" }}
+						// rules={{ required: "Image is required" }}
 					/>
 					<TextInput
 						name='name'
@@ -88,7 +81,7 @@ export default React.forwardRef<any, Props>(
 							{ label: "Other", value: FriendType.Other },
 						]}
 					/> */}
-					<Dropdown
+					{/* <Dropdown
 						name='method'
 						label='Preferred Contact Method'
 						error={methods.formState.errors.method}
@@ -98,36 +91,39 @@ export default React.forwardRef<any, Props>(
 							icon: method.icon,
 							value: method.id,
 						}))}
-					/>
+					/> */}
 					<DatePicker
 						name='lastContacted'
 						label='Last Contacted'
 						error={methods.formState.errors.lastContacted}
 						rules={{ required: "Last Contacted is required" }}
 					/>
-					<Text style={baseStyles.label}>Contact Frequency</Text>
+					<Text style={[sharedFormStyles.label, themeStyles.label]}>
+						Contact Frequency
+					</Text>
 					<Row
 						style={{
 							justifyContent: "space-around",
 							marginBottom: 10,
+
+							alignItems: "center",
 						}}
 					>
 						<Dropdown
 							name='freq1'
-							customStyle={{ width: 150 }}
+							customStyle={{ width: 100 }}
 							error={methods.formState.errors.freq1}
 							rules={{ required: "Frequency is required" }}
 							data={[
 								{ label: "once", value: 1 },
 								{ label: "twice", value: 2 },
 								{ label: "thrice", value: 3 },
-								{ label: "four times", value: 4 },
-								{ label: "custom", value: 5 },
 							]}
 						/>
+						<Text style={[baseStyles.label, themeStyles.label]}>a</Text>
 						<Dropdown
 							name='freq2'
-							customStyle={{ width: 150 }}
+							customStyle={{ width: 100 }}
 							error={methods.formState.errors.freq2}
 							rules={{ required: "Frequency is required" }}
 							data={[

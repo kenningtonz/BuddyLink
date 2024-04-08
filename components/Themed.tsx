@@ -10,23 +10,18 @@ import {
 } from "react-native";
 
 import Colors from "@/constants/Colors";
-import { useColorScheme } from "./useColorScheme";
+import useColorScheme from "@/components/useColorScheme";
 
 // export type PressableProps = ThemeProps & DefaultPressable["props"];
 export type TextProps = DefaultText["props"];
 export type ViewProps = DefaultView["props"];
 
-export function useThemeColor(
-	colorName: keyof typeof Colors.light & keyof typeof Colors.dark
-) {
-	const theme = useColorScheme() ?? "light";
-
-	return Colors[theme][colorName];
-}
-
 export function Text(props: TextProps) {
 	const { style, ...otherProps } = props;
-	const color = useThemeColor("onBackground");
+	const color =
+		useColorScheme() === "dark"
+			? Colors.dark.onBackground
+			: Colors.light.onBackground;
 	const fontFamily = "Fredoka";
 	return <DefaultText style={[{ color, fontFamily }, style]} {...otherProps} />;
 }
@@ -54,7 +49,10 @@ export function Row(props: ViewProps) {
 
 export function Layout(props: ViewProps) {
 	const { style, children, ...otherProps } = props;
-	const backgroundColor = useThemeColor("background");
+	const backgroundColor =
+		useColorScheme() === "dark"
+			? Colors.dark.background
+			: Colors.light.background;
 
 	return (
 		<SafeAreaView

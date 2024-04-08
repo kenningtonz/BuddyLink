@@ -3,7 +3,7 @@ import { Text } from "@/components/Themed";
 import { Button, ButtonVariants } from "../Button";
 import { time } from "@/classes/time";
 import { sharedStyles as styles } from "../styles";
-import { useColorScheme } from "react-native";
+import useColorScheme from "@/components/useColorScheme";
 import Colors from "@/constants/Colors";
 import { LinearGradient } from "expo-linear-gradient";
 

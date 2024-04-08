@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Alert, StyleSheet, View, AppState } from "react-native";
 import { Layout, Row, Text } from "@/components/Themed";
-import { useUserStore } from "@/classes/userStore";
+import { useStore } from "@/classes/userStore";
 
 import {
 	FormProvider,
@@ -9,7 +9,7 @@ import {
 	SubmitHandler,
 	SubmitErrorHandler,
 } from "react-hook-form";
-
+import { getUserInfo, signIn } from "@/classes/firestore";
 import { Button, ButtonVariants } from "@/components/Button";
 
 import { TextInput, Dropdown } from "@/components/form";
@@ -21,11 +21,28 @@ interface FormData {
 }
 const LogIn = () => {
 	const [loading, setLoading] = useState(false);
+	const setUser = useStore((state) => state.setUser);
 	const router = useRouter();
 	const methods = useForm<FormData>();
 
 	const signInWithEmail: SubmitHandler<FormData> = async (data) => {
 		setLoading(true);
+		const signInData = await signIn(data.email, data.password);
+		if (signInData.error) {
+			Alert.alert(signInData.message);
+			setLoading(false);
+			return;
+		} else {
+			const user = await getUserInfo(data.email);
+			setUser({
+				email: user.email,
+				isLocal: false,
+				settings: user.settings,
+				id: user.id,
+			});
+			useStore.setState({ friends: user.friends });
+			useStore.setState({ reminders: user.reminders });
+		}
 
 		router.push("/(tabs)");
 		setLoading(false);

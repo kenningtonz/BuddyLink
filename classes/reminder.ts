@@ -1,25 +1,34 @@
-import { ContactMethod, Friend } from "./friend";
+import { schedulePushNotification } from "@/utils/notifications";
+import { Friend } from "./friend";
 import { time } from "./time";
+import { generateID } from "@/utils/generateID";
 
 interface Reminder {
-	id: number;
+	id: string;
 	friendID: string;
 	message: string;
+	title: string;
 	// contactMethod: ContactMethod;
 	date: Date;
 	hasSeen: boolean;
 }
 
 const newReminder = (
-	friendID: string,
-	friendName: string,
-	date: Date,
+	lastContacted: Date,
+	id: string,
+	name: string,
+	frequency: { unit: number; period: string },
 	reminderTime: time
 ) => {
-	return {
-		id: Math.floor(Math.random() * 1000),
-		friendID: friendID,
-		message: `Contact ${friendName} today!`,
+	const date = nextReminderDate(lastContacted, frequency);
+	const timeSinceLastContacted = new Date().getTime() - lastContacted.getTime();
+	const reminder: Reminder = {
+		id: generateID(10),
+		friendID: id,
+		message: `It'ss been ${new Date(
+			timeSinceLastContacted
+		).toLocaleString()} since you last contacted ${name}!`,
+		title: `Contact ${name}`,
 		date: new Date(
 			date.getFullYear(),
 			date.getMonth(),
@@ -29,7 +38,39 @@ const newReminder = (
 		),
 		hasSeen: false,
 	};
+	const secondsTill = new Date().getTime() - reminder.date.getTime();
+	// schedulePushNotification(
+	// 	reminder.title,
+	// 	reminder.message,
+	// 	reminder.date.getTime(),
+	// 	reminder.id
+	// );
+	return reminder;
 };
+
+function nextReminderDate(
+	lastContacted: Date,
+	frequency: { unit: number; period: string }
+) {
+	const unit = frequency.unit;
+	const period = frequency.period;
+	const date = new Date(lastContacted);
+	switch (period) {
+		case "day":
+			date.setDate(date.getDate() + unit);
+			break;
+		case "week":
+			date.setDate(date.getDate() + unit * 7);
+			break;
+		case "month":
+			date.setMonth(date.getMonth() + unit);
+			break;
+		case "year":
+			date.setFullYear(date.getFullYear() + unit);
+			break;
+	}
+	return date;
+}
 
 // enum ReminderMethod {
 // 	auto,
@@ -52,21 +93,3 @@ export { Reminder, newReminder };
 function sendReminder(friend: Friend) {
 	//send reminder
 }
-
-const nextReminderDate = (friend: Friend) => {
-	// const lastContacted = friend.lastContacted;
-	// const frequency = friend.frequency;
-	// const unit = frequency.unit;
-	// const period = frequency.period;
-	// let nextReminder = new Date();
-	// if(period === 'days'){
-	//     nextReminder.setDate(lastContacted.getDate() + unit);
-	// } else if(period === 'weeks'){
-	//     nextReminder.setDate(lastContacted.getDate() + (unit * 7));
-	// } else if(period === 'months'){
-	//     nextReminder.setMonth(lastContacted.getMonth() + unit);
-	// } else if(period === 'years'){
-	//     nextReminder.setFullYear(lastContacted.getFullYear() + unit);
-	// }
-	// return nextReminder;
-};

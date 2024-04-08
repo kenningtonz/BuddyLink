@@ -6,7 +6,7 @@ import { DatePicker } from "../form";
 import { Row } from "../Themed";
 import { LinearGradient } from "expo-linear-gradient";
 import Colors from "@/constants/Colors";
-import { useColorScheme } from "react-native";
+import useColorScheme from "@/components/useColorScheme";
 import { sharedStyles as styles } from "@/components/styles";
 const Page2: React.FC<{
 	next: () => void;

@@ -3,8 +3,8 @@ import { useController, useFormContext, FieldError } from "react-hook-form";
 import { Text } from "../Themed";
 import dayjs from "dayjs";
 import Dialog from "../Dialog";
-
-import { Pressable, View, useColorScheme } from "react-native";
+import useColorScheme from "../useColorScheme";
+import { Pressable, View } from "react-native";
 import { sharedFormStyles, darkTheme, lightTheme } from "./styles";
 
 import React, { useState } from "react";
@@ -51,7 +51,9 @@ export default React.forwardRef<any, Props>(
 							mode='single'
 							calendarTextStyle={{ fontFamily: "Fredoka" }}
 							selectedItemColor={Colors.light.primary}
-							maxDate={new Date()}
+							headerTextStyle={{ fontFamily: "Fredoka" }}
+							weekDaysTextStyle={{ fontFamily: "Fredoka" }}
+							maxDate={new Date(new Date().getTime() + 1000 * 60 * 60)}
 							onChange={(params) => {
 								field.onChange(params.date);
 								console.log(new Date(params.date as string));

@@ -4,7 +4,8 @@ import { useStore, saveToLocal } from "@/classes/userStore";
 
 import relativeDate from "@/utils/relativeDate";
 import { SubmitHandler } from "react-hook-form";
-import { View as Column, Image, Pressable, useColorScheme } from "react-native";
+import { View as Column, Image, Pressable } from "react-native";
+import useColorScheme from "@/components/useColorScheme";
 import { Text, Row, Layout } from "@/components/Themed";
 import { Button, ButtonVariants } from "@/components/Button";
 import { sharedStyles as baseStyles } from "@/components/styles";
@@ -15,8 +16,6 @@ import { LinearGradient } from "expo-linear-gradient";
 
 import Dialog from "@/components/Dialog";
 
-import { FriendType, contactMethods } from "@/classes/friend";
-
 interface FormData {
 	name: string;
 	method: number;
@@ -26,7 +25,7 @@ interface FormData {
 	lastContacted: Date;
 }
 
-const Friend = () => {
+const FriendPage = () => {
 	const { id } = useLocalSearchParams<{ id: string }>();
 	const friendList = useStore((state) => state.friends);
 	const editFriend = useStore((state) => state.editFriend);
@@ -55,8 +54,6 @@ const Friend = () => {
 
 	const onSubmit: SubmitHandler<FormData> = (data) => {
 		friend.name = data.name;
-
-		friend.method = contactMethods[data.method];
 		friend.frequency = { unit: data.freq1, period: data.freq2 };
 		friend.img = data.img;
 		friend.lastContacted = data.lastContacted;
@@ -178,12 +175,8 @@ const Friend = () => {
 
 						<Text style={{ fontSize: 30 }}>{friend.name}</Text>
 					</Row>
-					{friend.type ? (
-						<>
-							<Text style={baseStyles.label}>Type:</Text>
-							<Text style={{ fontSize: 16 }}>{friend.type}</Text>
-						</>
-					) : null}
+					<Text style={baseStyles.label}>Next Reminder:</Text>
+					<Text>{friend.nextReminder?.toString()} - </Text>
 					{friend.method ? (
 						<Text style={baseStyles.label}>Preferred Contact Method:</Text>
 					) : null}
@@ -215,33 +208,4 @@ const Friend = () => {
 	);
 };
 
-// const EditFriend = ({ id }) => {
-// 	const {
-// 		control,
-// 		handleSubmit,
-// 		formState: { errors },
-// 	} = useForm();
-// 	const [submittedData, setSubmittedData] = useState(null);
-
-// 	const onSubmit = (data) => {
-// 		// Simulate form submission
-// 		console.log("Submitted Data:", data);
-// 		setSubmittedData(data);
-// 	};
-// 	return (
-// 		<SafeAreaView>
-// 			<View>
-// 				<Text>Edit Friend</Text>
-// 				<Controller
-// 					control={control}
-// 					render={({ field }) => <TextInput {...field} placeholder='Name' />}
-// 					name='name'
-// 					rules={{ required: "You must enter a name" }}
-// 				/>
-// 				{errors.name && <Text>{errors.name.message}</Text>}
-// 			</View>
-// 		</SafeAreaView>
-// 	);
-// };
-
-export default Friend;
+export default FriendPage;

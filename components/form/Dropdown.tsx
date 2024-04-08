@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { View, useColorScheme } from "react-native";
+import { View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { useController, useFormContext, FieldError } from "react-hook-form";
 import { Text } from "../Themed";
 import { sharedFormStyles, darkTheme, lightTheme } from "./styles";
 import Colors from "@/constants/Colors";
 import { FontAwesome } from "@expo/vector-icons";
-
+import useColorScheme from "@/components/useColorScheme";
 interface Props {
 	name: string;
 	label?: string;
@@ -46,7 +46,11 @@ export default React.forwardRef<any, Props>(
 					placeholderStyle={sharedFormStyles.placeholderStyle}
 					selectedTextStyle={sharedFormStyles.textStyle}
 					itemContainerStyle={sharedFormStyles.itemContainer}
-					activeColor={Colors.light.primary}
+					activeColor={
+						theme == "light"
+							? Colors.light.primaryContainer
+							: Colors.dark.primaryContainer
+					}
 					itemTextStyle={sharedFormStyles.textStyle}
 					accessibilityLabel={`Select a ${label}`}
 					placeholder={`Select a ${label}`}

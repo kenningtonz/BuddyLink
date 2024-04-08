@@ -1,11 +1,6 @@
 import React from "react";
-import {
-	Text,
-	StyleSheet,
-	Pressable,
-	PressableProps,
-	useColorScheme,
-} from "react-native";
+import { Text, StyleSheet, Pressable, PressableProps } from "react-native";
+import useColorScheme from "@/components/useColorScheme";
 import { FontAwesome6 } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 
