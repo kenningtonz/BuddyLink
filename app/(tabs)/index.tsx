@@ -28,21 +28,37 @@ export default function Friends() {
 	const moveReminder = useStore((state) => state.moveReminder);
 	const user = useStore((state) => state.user);
 	const editFriend = useStore((state) => state.editFriend);
+	const [checked, setChecked] = useState(false);
 
-	useEffect(() => {
+	const reminderTime =
+		user.settings.reminderTime.hour * 60 + user.settings.reminderTime.minute;
+	const nowTime = new Date().getHours() * 60 + new Date().getMinutes();
+
+	const check = () => {
 		if (futureReminders.length > 0) {
 			checkReminders(
 				futureReminders,
 				user.settings.reminderTime,
 				addReminder,
 				moveReminder,
-				user.settings.pushNotifications,
+				user.settings.token,
 				friendsList,
 				editFriend
 			);
 			saveToLocal();
 		}
-	}, []);
+	};
+
+	useEffect(() => {
+		if (reminderTime < nowTime - 10) {
+			const checkInterval = setInterval(() => {
+				check();
+				setChecked(!checked);
+			}, 60000);
+
+			return () => clearInterval(checkInterval);
+		}
+	}, [checked]);
 
 	useEffect(() => {
 		if (sort === "a-z") {

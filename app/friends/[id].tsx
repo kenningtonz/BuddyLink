@@ -4,7 +4,7 @@ import { useStore, saveToLocal } from "@/classes/userStore";
 
 import relativeDate from "@/utils/relativeDate";
 import { SubmitHandler } from "react-hook-form";
-import { View as Column, Image, Pressable } from "react-native";
+import { View as Column, Image, Pressable, View } from "react-native";
 import useColorScheme from "@/components/useColorScheme";
 import { Text, Row, Layout } from "@/components/Themed";
 import { Button, ButtonVariants } from "@/components/Button";
@@ -15,12 +15,14 @@ import FriendForm from "@/components/form/FriendForm";
 import { LinearGradient } from "expo-linear-gradient";
 
 import Dialog from "@/components/Dialog";
+import { Friend, Period } from "@/classes/friend";
+import { nextReminderDate } from "@/classes/reminder";
 
 interface FormData {
 	name: string;
 	method: number;
-	freq1: number;
-	freq2: string;
+	frequency: Period;
+
 	img: string;
 	lastContacted: Date;
 }
@@ -43,7 +45,7 @@ const FriendPage = () => {
 			: [Colors.dark.primaryContainer, Colors.dark.background];
 
 	const router = useRouter();
-
+	console.log(friend?.nextReminderDate);
 	if (!friend) {
 		return (
 			<Layout>
@@ -53,10 +55,19 @@ const FriendPage = () => {
 	}
 
 	const onSubmit: SubmitHandler<FormData> = (data) => {
+		if (
+			data.frequency != friend.frequency ||
+			data.lastContacted != friend.lastContacted
+		) {
+			friend.nextReminderDate = nextReminderDate(
+				data.lastContacted,
+				data.frequency
+			);
+		}
 		friend.name = data.name;
-		friend.frequency = { unit: data.freq1, period: data.freq2 };
-		friend.img = data.img;
+		friend.frequency = data.frequency;
 		friend.lastContacted = new Date(data.lastContacted);
+		friend.img = data.img;
 
 		editFriend(friend);
 		setIsEditing(false);
@@ -114,8 +125,13 @@ const FriendPage = () => {
 			<Dialog open={showDialog} setOpen={setShowDialog}>
 				<Text>Are you sure you want to delete {friend.name}?</Text>
 				<Row>
-					<Button onPress={() => setShowDialog(false)} text='Cancel' />
 					<Button
+						variant={ButtonVariants.Primary}
+						onPress={() => setShowDialog(false)}
+						text='Cancel'
+					/>
+					<Button
+						variant={ButtonVariants.Danger}
 						onPress={() => {
 							removeFriend(friend.id);
 							router.push("/");
@@ -133,10 +149,8 @@ const FriendPage = () => {
 						defaultValues={{
 							img: friend.img ?? "",
 							name: friend.name,
-
 							method: friend.method?.id,
-							freq1: friend.frequency?.unit ?? 1,
-							freq2: friend.frequency?.period ?? "day",
+							frequency: friend.frequency,
 							lastContacted: friend.lastContacted ?? new Date(),
 						}}
 						onSubmit={onSubmit}
@@ -177,9 +191,7 @@ const FriendPage = () => {
 
 						<Text style={{ fontSize: 30 }}>{friend.name}</Text>
 					</Row>
-					<Text style={baseStyles.label}>Next Reminder:</Text>
-					{/* <Text>{typeof friend.nextReminderDate}</Text> */}
-					{/* <Text>{relativeDate(friend.nextReminderDate)} - </Text> */}
+
 					{friend.method ? (
 						<Text style={baseStyles.label}>Preferred Contact Method:</Text>
 					) : null}
@@ -196,15 +208,36 @@ const FriendPage = () => {
 						) : null}
 					</Row>
 
-					<Text style={baseStyles.label}>Last Contacted:</Text>
-					<Text style={{ fontSize: 16 }}>
-						{friend.lastContacted.toLocaleDateString("en-CA", {
-							month: "long",
-							year: "numeric",
-							day: "numeric",
-						})}
-					</Text>
-					{/* <Text>frequency: {friend.frequency}</Text> */}
+					<View style={{ marginBottom: 30 }}>
+						<Text style={{ fontSize: 20, fontFamily: "Fredoka-Medium" }}>
+							Last Contacted:
+						</Text>
+						<Text style={{ fontSize: 20 }}>
+							{friend.lastContacted.toLocaleString("en-CA", {
+								month: "long",
+								year: "numeric",
+								day: "numeric",
+							})}
+						</Text>
+					</View>
+					<View style={{ marginBottom: 30 }}>
+						<Text style={{ fontSize: 20, fontFamily: "Fredoka-Medium" }}>
+							Frequency of Reminders:
+						</Text>
+						<Text style={{ fontSize: 20 }}>{friend.frequency}</Text>
+					</View>
+					<View style={{ marginBottom: 30 }}>
+						<Text style={{ fontSize: 20, fontFamily: "Fredoka-Medium" }}>
+							Next Reminder:
+						</Text>
+						<Text style={{ fontSize: 20 }}>
+							{friend.nextReminderDate.toLocaleString("en-CA", {
+								month: "long",
+								year: "numeric",
+								day: "numeric",
+							})}
+						</Text>
+					</View>
 				</>
 			)}
 		</Layout>

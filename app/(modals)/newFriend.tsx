@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { SubmitHandler } from "react-hook-form";
-import { Friend, Frequency } from "@/classes/friend";
+import { Friend, Frequency, Period } from "@/classes/friend";
 
 import { Text, Layout } from "@/components/Themed";
 
@@ -18,8 +18,7 @@ import { newReminder } from "@/classes/reminder";
 interface FormData {
 	name: string;
 	method: number;
-	freq1: number;
-	freq2: string;
+	frequency: Period;
 	img: string;
 	lastContacted: Date;
 }
@@ -32,30 +31,12 @@ const NewFriend = () => {
 	const addReminder = useStore((state) => state.addReminder);
 
 	const onSubmit: SubmitHandler<FormData> = (data) => {
-		const friend = new Friend(data.name, new Date(data.lastContacted), {
-			unit: data.freq1,
-			period: data.freq2,
-		});
-		// const friend = {
-		// 	name: data.name,
-		// 	method: contactMethods[data.method],
-		// 	frequency: { unit: data.freq1, period: data.freq2 },
-		// 	img: data.img,
-		// 	lastContacted: new Date(data.lastContacted),
-		// 	id: generateID(),
-
-		// };
+		const friend = new Friend(
+			data.name,
+			new Date(data.lastContacted),
+			data.frequency
+		);
 		addFriend(friend);
-		// if (user.id !== undefined) {
-		// 	addReminder(
-		// 		newReminder(
-		// 			friend.nextReminderDate,
-		// 			friend.id,
-		// 			friend.name,
-		// 			user.settings.reminderTime
-		// 		)
-		// 	);
-		// }
 
 		//testing
 		const today = new Date();
@@ -67,6 +48,7 @@ const NewFriend = () => {
 				minute: currentMinute + 1,
 			})
 		);
+
 		saveToLocal();
 		router.back();
 	};
@@ -116,8 +98,6 @@ const NewFriend = () => {
 				defaultValues={{
 					img: "",
 					name: "",
-					freq1: 1,
-					freq2: "day",
 				}}
 			/>
 		</Layout>

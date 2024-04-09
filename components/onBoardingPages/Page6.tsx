@@ -4,12 +4,13 @@ import { Button, ButtonVariants } from "../Button";
 import { time, timeToString } from "@/classes/time";
 import { sharedStyles as styles } from "../styles";
 import { View } from "react-native";
+import { Period } from "@/classes/friend";
 
 const Page6: React.FC<{
 	friend: {
 		name: string;
 		lastContacted: Date;
-		freq: { unit: number; period: string };
+		freq: Period;
 	};
 	userSettings: { reminderTime: time };
 	next: () => void;
@@ -40,14 +41,7 @@ const Page6: React.FC<{
 				<Text style={{ fontSize: 20, fontFamily: "Fredoka-Medium" }}>
 					Frequency of Reminders:
 				</Text>
-				<Text style={{ fontSize: 20 }}>
-					{friend.freq.unit == 1
-						? "Once"
-						: friend.freq.unit == 2
-						? "Twice"
-						: "Thrice"}{" "}
-					a {friend.freq.period}
-				</Text>
+				<Text style={{ fontSize: 20 }}>{friend.freq}</Text>
 			</View>
 
 			<View style={{ marginBottom: 30 }}>

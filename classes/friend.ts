@@ -64,6 +64,18 @@ interface Frequency {
 	period: string;
 }
 
+export enum Period {
+	daily = "Daily",
+	twoDay = "Every 2 Days",
+	threeDay = "Every 3 Days",
+	weekly = "Weekly (7 days)",
+	biWeekly = "Bi-Weekly (2 weeks)",
+	monthly = "Monthly (4 weeks)",
+	biMonthly = "Bi-Monthly (8 weeks)",
+	quarterly = "Quarterly (13 weeks)",
+	yearly = "Yearly (52 weeks)",
+}
+
 // interface ContactInfo {
 // 	email: string;
 // 	phone: string;
@@ -77,7 +89,7 @@ interface Friend {
 	id: string;
 	name: string;
 	lastContacted: Date;
-	frequency: Frequency;
+	frequency: Period;
 
 	// reminderTime?: { hour: number; minute: number };
 	nextReminderDate: Date;
@@ -95,7 +107,7 @@ class Friend {
 	img?: string;
 	birthday?: Date;
 
-	constructor(name: string, lastContacted: Date, frequency: Frequency) {
+	constructor(name: string, lastContacted: Date, frequency: Period) {
 		this.name = name;
 		this.frequency = frequency;
 		this.lastContacted = lastContacted;

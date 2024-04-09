@@ -33,7 +33,8 @@ const useStore = create<UserState & FriendState & ReminderState>((set) => ({
 		email: null,
 		settings: {
 			theme: "light",
-			pushNotifications: "true",
+			pushNotifications: false,
+			token: "",
 			reminderTime: { hour: 9, minute: 0 },
 		},
 	},
@@ -46,10 +47,23 @@ const useStore = create<UserState & FriendState & ReminderState>((set) => ({
 	},
 	removeFriend: (id: string) =>
 		set((state) => ({
+			remindersFuture: state.remindersFuture.filter((r) => r.friendID !== id),
+			reminders: state.reminders.filter((r) => r.friendID !== id),
 			friends: state.friends.filter((friend) => friend.id !== id),
 		})),
 	editFriend: (friend: Friend) =>
 		set((state) => ({
+			remindersFuture: state.remindersFuture.map((r) => {
+				if (r.friendID === friend.id) {
+					r.title = `Contact ${friend.name}`;
+					r.message = `It's been a bit since you last contacted ${friend.name}!`;
+					r.date = addDateTime(
+						friend.nextReminderDate,
+						state.user.settings.reminderTime
+					);
+				}
+				return r;
+			}),
 			friends: state.friends.map((f) => {
 				if (f.id === friend.id) {
 					return friend;
@@ -112,7 +126,8 @@ export function clearStore() {
 			email: null,
 			settings: {
 				theme: "light",
-				pushNotifications: "true",
+				pushNotifications: false,
+				token: "",
 				reminderTime: { hour: 9, minute: 0 },
 			},
 		},

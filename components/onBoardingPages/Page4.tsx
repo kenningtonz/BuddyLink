@@ -5,26 +5,27 @@ import * as Notifications from "expo-notifications";
 import { Row } from "../Themed";
 
 import { sharedStyles as styles } from "../styles";
+import { registerForPushNotificationsAsync } from "@/utils/notifications";
 
 const Page4: React.FC<{
 	next: () => void;
 	back: () => void;
-	setSetting: (value: string) => void;
+	setSetting: (value: boolean) => void;
 }> = ({ next, back, setSetting }) => {
-	const [status, setStatus] = useState<string | null>(null);
+	// const [status, setStatus] = useState<string | null>(null);
 
-	const requestPermissions = async () => {
-		const { status } = await Notifications.requestPermissionsAsync();
-		setStatus(status);
-		console.log(status);
-		if (status == "granted") {
-			const { data: token } = await Notifications.getExpoPushTokenAsync();
-			if (token) {
-				setSetting(token);
-			}
-		}
-		next();
-	};
+	// const requestPermissions = async () => {
+	// 	const { status } = await Notifications.requestPermissionsAsync();
+	// 	setStatus(status);
+	// 	console.log(status);
+	// 	if (status == "granted") {
+	// 		const token = await registerForPushNotificationsAsync();
+	// 		if (token) {
+	// 			setSetting(token);
+	// 		}
+	// 	}
+	// 	next();
+	// };
 
 	return (
 		<>
@@ -33,8 +34,9 @@ const Page4: React.FC<{
 				text='Yes'
 				variant={ButtonVariants.Primary}
 				onPress={() => {
-					requestPermissions();
-					// next();
+					// requestPermissions();
+					setSetting(true);
+					next();
 				}}
 			/>
 
@@ -50,7 +52,7 @@ const Page4: React.FC<{
 					text='Continue without'
 					variant={ButtonVariants.Primary}
 					onPress={() => {
-						setSetting("");
+						setSetting(false);
 						next();
 					}}
 				/>

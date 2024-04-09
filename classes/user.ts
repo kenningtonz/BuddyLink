@@ -18,7 +18,8 @@ interface UserDataBase extends User {
 //settings
 type UserSettings = {
 	theme?: string;
-	pushNotifications: string;
+	token: string;
+	pushNotifications: boolean;
 	reminderTime: time;
 };
 

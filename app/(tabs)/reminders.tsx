@@ -44,37 +44,6 @@ const Reminders = () => {
 
 	return (
 		<Layout>
-			<Button
-				text='New Reminder'
-				variant={ButtonVariants.Ghost}
-				onPress={() => {
-					sendPushNotification(
-						user.settings.pushNotifications,
-						newReminder(new Date(), "test", "test", { hour: 17, minute: 43 })
-					);
-				}}
-			/>
-			<Button
-				text='New Reminder'
-				variant={ButtonVariants.Ghost}
-				onPress={() => {
-					const newR = newReminder(new Date(), "test", "test", {
-						hour: 18,
-						minute: 11,
-					});
-					console.log(new Date().getHours(), new Date().getMinutes());
-					console.log(newR.date.getHours(), newR.date.getMinutes());
-
-					const secondsTillReminder = newR.date.getTime() - new Date().getTime();
-					console.log(secondsTillReminder / 1000);
-					schedulePushNotification(
-						newR.title,
-						newR.message,
-						secondsTillReminder / 1000,
-						newR.id
-					);
-				}}
-			/>
 			{upComingReminders.length > 0 ? (
 				<>
 					<Text
@@ -93,6 +62,7 @@ const Reminders = () => {
 								flexGrow: 0,
 							},
 						]}
+						inverted
 						data={upComingReminders}
 						keyExtractor={(item) => item.id}
 						renderItem={({ item }) => (

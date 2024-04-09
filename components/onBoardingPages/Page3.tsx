@@ -5,23 +5,17 @@ import { Dropdown, sharedFormStyles, darkTheme, lightTheme } from "../form";
 import { Row, Text } from "../Themed";
 import { sharedStyles as styles } from "@/components/styles";
 import useColorScheme from "../useColorScheme";
+import { Period } from "@/classes/friend";
 
 const Page3: React.FC<{
 	next: () => void;
 	back: () => void;
-	setFriend: (value: { unit: number; period: string }) => void;
+	setFriend: (value: Period) => void;
 }> = ({ next, back, setFriend }) => {
-	const { ...methods } = useForm<{ freq1: number; freq2: string }>({
-		defaultValues: {
-			freq1: 1,
-			freq2: "day",
-		},
-	});
-	const onSubmit: SubmitHandler<{ freq1: number; freq2: string }> = async (
-		form
-	) => {
+	const { ...methods } = useForm<{ freq: Period }>({});
+	const onSubmit: SubmitHandler<{ freq: Period }> = async (form) => {
 		console.log(form);
-		setFriend({ unit: form.freq1, period: form.freq2 });
+		setFriend(form.freq);
 		next();
 	};
 
@@ -34,39 +28,24 @@ const Page3: React.FC<{
 				How often would you like to contact them?
 			</Text>
 			<FormProvider {...methods}>
-				<Row
-					style={{
-						justifyContent: "space-around",
-						marginBottom: 10,
-
-						alignItems: "center",
-					}}
-				>
-					<Dropdown
-						name='freq1'
-						customStyle={{ width: 100 }}
-						error={methods.formState.errors.freq1}
-						rules={{ required: "Frequency is required" }}
-						data={[
-							{ label: "once", value: 1 },
-							{ label: "twice", value: 2 },
-							{ label: "thrice", value: 3 },
-						]}
-					/>
-					<Text style={[sharedFormStyles.label, themeStyles.label]}>a</Text>
-					<Dropdown
-						name='freq2'
-						customStyle={{ width: 100 }}
-						error={methods.formState.errors.freq2}
-						rules={{ required: "Frequency is required" }}
-						data={[
-							{ label: "day", value: "day" },
-							{ label: "week", value: "week" },
-							{ label: "month", value: "month" },
-							{ label: "year", value: "year" },
-						]}
-					/>
-				</Row>
+				<Dropdown
+					name='freq'
+					label='Contact Frequency'
+					customStyle={{ width: 100 }}
+					error={methods.formState.errors.freq}
+					rules={{ required: "Frequency is required" }}
+					data={[
+						{ label: Period.daily, value: Period.daily },
+						{ label: Period.twoDay, value: Period.twoDay },
+						{ label: Period.threeDay, value: Period.threeDay },
+						{ label: Period.weekly, value: Period.weekly },
+						{ label: Period.biWeekly, value: Period.biWeekly },
+						{ label: Period.monthly, value: Period.monthly },
+						{ label: Period.biMonthly, value: Period.biMonthly },
+						{ label: Period.quarterly, value: Period.quarterly },
+						{ label: Period.yearly, value: Period.yearly },
+					]}
+				/>
 			</FormProvider>
 			<Row style={{ gap: 8 }}>
 				<Button

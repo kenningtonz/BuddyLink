@@ -16,6 +16,7 @@ import {
 import { Text } from "@/components/Themed";
 import { sharedStyles as baseStyles } from "@/components/styles";
 import { useColorScheme } from "react-native";
+import { Period } from "@/classes/friend";
 
 // interface FormData {
 // 	name: string;
@@ -30,8 +31,7 @@ import { useColorScheme } from "react-native";
 interface FormData {
 	name: string;
 	method: number;
-	freq1: number;
-	freq2: string;
+	frequency: Period;
 	img: string;
 	lastContacted: Date;
 }
@@ -98,42 +98,28 @@ export default React.forwardRef<any, Props>(
 						error={methods.formState.errors.lastContacted}
 						rules={{ required: "Last Contacted is required" }}
 					/>
-					<Text style={[sharedFormStyles.label, themeStyles.label]}>
+					{/* <Text style={[sharedFormStyles.label, themeStyles.label]}>
 						Contact Frequency
-					</Text>
-					<Row
-						style={{
-							justifyContent: "space-around",
-							marginBottom: 10,
+					</Text> */}
 
-							alignItems: "center",
-						}}
-					>
-						<Dropdown
-							name='freq1'
-							customStyle={{ width: 100 }}
-							error={methods.formState.errors.freq1}
-							rules={{ required: "Frequency is required" }}
-							data={[
-								{ label: "once", value: 1 },
-								{ label: "twice", value: 2 },
-								{ label: "thrice", value: 3 },
-							]}
-						/>
-						<Text style={[baseStyles.label, themeStyles.label]}>a</Text>
-						<Dropdown
-							name='freq2'
-							customStyle={{ width: 100 }}
-							error={methods.formState.errors.freq2}
-							rules={{ required: "Frequency is required" }}
-							data={[
-								{ label: "day", value: "day" },
-								{ label: "week", value: "week" },
-								{ label: "month", value: "month" },
-								{ label: "year", value: "year" },
-							]}
-						/>
-					</Row>
+					<Dropdown
+						name='frequency'
+						label='Contact Frequency'
+						customStyle={{ width: 100 }}
+						error={methods.formState.errors.frequency}
+						rules={{ required: "Frequency is required" }}
+						data={[
+							{ label: Period.daily, value: Period.daily },
+							{ label: Period.twoDay, value: Period.twoDay },
+							{ label: Period.threeDay, value: Period.threeDay },
+							{ label: Period.weekly, value: Period.weekly },
+							{ label: Period.biWeekly, value: Period.biWeekly },
+							{ label: Period.monthly, value: Period.monthly },
+							{ label: Period.biMonthly, value: Period.biMonthly },
+							{ label: Period.quarterly, value: Period.quarterly },
+							{ label: Period.yearly, value: Period.yearly },
+						]}
+					/>
 				</>
 				<Button
 					variant={ButtonVariants.Primary}

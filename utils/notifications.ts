@@ -11,6 +11,7 @@ export async function schedulePushNotification(
 	seconds: number,
 	id: string
 ) {
+	console.log("Scheduling notification", seconds);
 	await Notifications.scheduleNotificationAsync({
 		content: {
 			title: title,

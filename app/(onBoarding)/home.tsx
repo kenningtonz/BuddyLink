@@ -15,7 +15,7 @@ import {
 } from "@/components/onBoardingPages";
 import { time } from "@/classes/time";
 import { generateID } from "@/utils/generateID";
-import { Friend } from "@/classes/friend";
+import { Friend, Period } from "@/classes/friend";
 
 import { Image } from "expo-image";
 import useColorScheme from "@/components/useColorScheme";
@@ -39,19 +39,21 @@ export default function OnBoarding() {
 	const [friend, setFriend] = useState<{
 		name: string;
 		lastContacted: Date;
-		freq: { unit: number; period: string };
+		freq: Period;
 	}>({
 		name: "",
 		lastContacted: new Date(),
-		freq: { unit: 0, period: "day" },
+		freq: Period.daily,
 	});
 
 	const [userSettings, setUserSettings] = useState<{
 		reminderTime: time;
-		pushNotifications: string;
+		pushNotifications: boolean;
+		token: "";
 	}>({
 		reminderTime: { hour: 9, minute: 0 },
-		pushNotifications: "",
+		pushNotifications: false,
+		token: "",
 	});
 
 	const complete = () => {
@@ -186,14 +188,14 @@ export default function OnBoarding() {
 					<Page3
 						back={back}
 						next={next}
-						setFriend={(value: { unit: number; period: string }) => {
+						setFriend={(value: Period) => {
 							setFriend({ ...friend, freq: value });
 						}}
 					/>
 				) : null}
 				{onBoardPage == 4 ? (
 					<Page4
-						setSetting={(value: string) =>
+						setSetting={(value: boolean) =>
 							setUserSettings({ ...userSettings, pushNotifications: value })
 						}
 						back={back}

@@ -2,7 +2,7 @@ import {
 	schedulePushNotification,
 	sendPushNotification,
 } from "@/utils/notifications";
-import { Friend } from "./friend";
+import { Friend, Period } from "./friend";
 import { addDateTime, time } from "./time";
 import { generateID } from "@/utils/generateID";
 import { saveToLocal, useStore } from "./userStore";
@@ -54,10 +54,7 @@ const checkReminders = (
 	for (const reminder of futureReminders) {
 		if (reminder.date < now) {
 			// sendReminder(reminder);
-			if (Platform.OS != "web") {
-				sendPushNotification(token, reminder);
-				console.log("sent push notification");
-			}
+
 			moveReminder(reminder.id);
 			const friend = friends.find((f) => f.id === reminder.friendID);
 
@@ -80,26 +77,36 @@ const checkReminders = (
 //reminders  are added to futre,
 //when open app for web, or background for android, check and move to past and send off
 
-function nextReminderDate(
-	lastContacted: Date,
-	frequency: { unit: number; period: string }
-) {
-	const unit = frequency.unit;
-	const period = frequency.period;
+function nextReminderDate(lastContacted: Date, frequency: Period) {
 	const date = new Date(lastContacted);
 
-	switch (period) {
-		case "day":
-			date.setDate(date.getDate() + unit);
+	switch (frequency) {
+		case Period.daily:
+			date.setDate(date.getDate() + 1);
 			break;
-		case "week":
-			date.setDate(date.getDate() + unit * 7);
+		case Period.twoDay:
+			date.setDate(date.getDate() + 2);
 			break;
-		case "month":
-			date.setMonth(date.getMonth() + unit);
+		case Period.threeDay:
+			date.setDate(date.getDate() + 3);
 			break;
-		case "year":
-			date.setFullYear(date.getFullYear() + unit);
+		case Period.weekly:
+			date.setDate(date.getDate() + 7);
+			break;
+		case Period.biWeekly:
+			date.setDate(date.getDate() + 14);
+			break;
+		case Period.monthly:
+			date.setMonth(date.getMonth() + 1);
+			break;
+		case Period.biMonthly:
+			date.setMonth(date.getMonth() + 2);
+			break;
+		case Period.quarterly:
+			date.setMonth(date.getMonth() + 3);
+			break;
+		case Period.yearly:
+			date.setFullYear(date.getFullYear() + 1);
 			break;
 	}
 

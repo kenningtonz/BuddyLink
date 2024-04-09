@@ -15,8 +15,12 @@ import { useState } from "react";
 import { FormProvider, SubmitHandler, set, useForm } from "react-hook-form";
 import { TimeInput } from "@/components/form";
 import { time, timeToString } from "@/classes/time";
-import { registerForPushNotificationsAsync } from "@/utils/notifications";
+import {
+	registerForPushNotificationsAsync,
+	schedulePushNotification,
+} from "@/utils/notifications";
 import Colors from "@/constants/Colors";
+import { newReminder } from "@/classes/reminder";
 
 export default function Settings() {
 	const user = useStore((state) => state.user);
@@ -40,10 +44,15 @@ export default function Settings() {
 		if (token) {
 			setUser({
 				...user,
-				settings: { ...user.settings, pushNotifications: token },
+				settings: { ...user.settings, token: token },
 			});
 			saveToLocal();
 		}
+		setUser({
+			...user,
+			settings: { ...user.settings, pushNotifications: true },
+		});
+
 		console.log(token);
 	};
 
@@ -58,7 +67,7 @@ export default function Settings() {
 		<Layout style={{ justifyContent: "space-between" }}>
 			{Platform.OS != "web" ? (
 				<>
-					{user.settings.pushNotifications == "" ? (
+					{!user.settings.pushNotifications ? (
 						<View>
 							<Text style={{ fontSize: 20, fontFamily: "Fredoka-Medium" }}>
 								Push Notifications
@@ -84,7 +93,7 @@ export default function Settings() {
 								onPress={() => {
 									setUser({
 										...user,
-										settings: { ...user.settings, pushNotifications: "" },
+										settings: { ...user.settings, token: "", pushNotifications: false },
 									});
 									saveToLocal();
 								}}
@@ -208,6 +217,27 @@ export default function Settings() {
 					</View>
 				</Dialog>
 			</View>
+			{Platform.OS != "web" ? (
+				<Button
+					text='New Reminder'
+					variant={ButtonVariants.Ghost}
+					onPress={() => {
+						const newR = newReminder(new Date(), "test", "test", {
+							hour: new Date().getHours(),
+							minute: new Date().getMinutes() + 1,
+						});
+
+						const secondsTillReminder = newR.date.getTime() - new Date().getTime();
+						console.log(secondsTillReminder / 1000);
+						schedulePushNotification(
+							newR.title,
+							newR.message,
+							secondsTillReminder / 1000,
+							newR.id
+						);
+					}}
+				/>
+			) : null}
 		</Layout>
 	);
 }

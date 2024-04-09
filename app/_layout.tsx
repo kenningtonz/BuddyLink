@@ -14,9 +14,13 @@ import * as TaskManager from "expo-task-manager";
 import { Platform, Pressable, useColorScheme } from "react-native";
 import { Stack, useRouter } from "expo-router";
 import { useStore, loadFromLocal, saveToLocal } from "@/classes/userStore";
-import { registerForPushNotificationsAsync } from "@/utils/notifications";
+import {
+	registerForPushNotificationsAsync,
+	schedulePushNotification,
+} from "@/utils/notifications";
 import { Subscription } from "expo-notifications";
 import { checkReminders } from "@/classes/reminder";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export {
 	// Catch any errors thrown by the Layout component.
@@ -33,28 +37,31 @@ const BACKGROUND_REMINDER = "background-reminder";
 // 1. Define the task by providing a name and the function that should be executed
 // Note: This needs to be called in the global scope (e.g outside of your React components)
 TaskManager.defineTask(BACKGROUND_REMINDER, async () => {
-	const now = Date.now();
-	const friendsList = useStore((state) => state.friends);
-	const futureReminders = useStore((state) => state.remindersFuture);
-	const addReminder = useStore((state) => state.addReminder);
-	const moveReminder = useStore((state) => state.moveReminder);
-	const user = useStore((state) => state.user);
-	const editFriend = useStore((state) => state.editFriend);
-	if (futureReminders.length > 0) {
-		checkReminders(
-			futureReminders,
-			user.settings.reminderTime,
-			addReminder,
-			moveReminder,
-			user.settings.pushNotifications,
-			friendsList,
-			editFriend
-		);
-		saveToLocal();
+	const now = new Date();
+	const userData = await AsyncStorage.getItem("user");
+
+	const user = userData ? JSON.parse(userData) : {};
+	if (!user.settings.pushNotifications)
+		return BackgroundFetch.BackgroundFetchResult.NoData;
+
+	const reminderData = await AsyncStorage.getItem("reminders");
+	const reminders = reminderData ? JSON.parse(reminderData) : [];
+
+	for (const reminder of reminders) {
+		console.log(reminder);
+		const secondsTillReminder = (reminder.date.getTime() - now.getTime()) / 1000;
+		console.log(secondsTillReminder);
+		if (secondsTillReminder < 60 * 1) {
+			schedulePushNotification(
+				reminder.title,
+				reminder.message,
+				secondsTillReminder,
+				reminder.id
+			);
+			console.log("sent push notification");
+		}
 	}
-	console.log(
-		`Got background fetch call at date: ${new Date(now).toISOString()}`
-	);
+	console.log(`Got background fetch call at date: ${now.toISOString()}`);
 
 	// Be sure to return the successful result type!
 	return BackgroundFetch.BackgroundFetchResult.NewData;
@@ -143,21 +150,18 @@ export default function RootLayout() {
 	const [notification, setNotification] = useState<Notifications.Notification>();
 	const notificationListener = useRef<Subscription>();
 	const responseListener = useRef<Subscription>();
-	const [isRegistered, setIsRegistered] = useState(false);
-	const [status, setStatus] = useState<BackgroundFetch.BackgroundFetchStatus>();
 
 	const checkStatusAsync = async () => {
 		const status = await BackgroundFetch.getStatusAsync();
 		const isRegistered = await TaskManager.isTaskRegisteredAsync(
 			BACKGROUND_REMINDER
 		);
-		if (status != null) setStatus(status);
-		setIsRegistered(isRegistered);
-		console.log(status, isRegistered);
+		console.log("background", status, "isregistered", isRegistered);
 	};
 
 	useEffect(() => {
 		if (Platform.OS === "web") return;
+		registerBackgroundFetchAsync();
 		checkStatusAsync();
 		// unregisterBackgroundFetchAsync();
 
