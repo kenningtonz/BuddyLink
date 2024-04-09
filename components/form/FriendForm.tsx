@@ -105,7 +105,6 @@ export default React.forwardRef<any, Props>(
 					<Dropdown
 						name='frequency'
 						label='Contact Frequency'
-						customStyle={{ width: 100 }}
 						error={methods.formState.errors.frequency}
 						rules={{ required: "Frequency is required" }}
 						data={[

@@ -192,11 +192,13 @@ export default function Friends() {
 									)}
 									<Text
 										style={{
-											fontSize: 16,
+											fontSize: 20,
 											fontFamily: "Fredoka-Medium",
 											marginTop: 10,
 											color:
-												theme === "light" ? Colors.light.primary : Colors.dark.primary,
+												theme === "light"
+													? Colors.light.onSecondaryContainer
+													: Colors.dark.onSecondaryContainer,
 										}}
 									>
 										{item.name}

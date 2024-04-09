@@ -209,9 +209,7 @@ const Reminders = () => {
 						)}
 					/>
 				</>
-			) : (
-				<Text>No reminders</Text>
-			)}
+			) : null}
 		</Layout>
 	);
 };

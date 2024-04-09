@@ -31,7 +31,6 @@ const Page3: React.FC<{
 				<Dropdown
 					name='freq'
 					label='Contact Frequency'
-					customStyle={{ width: 100 }}
 					error={methods.formState.errors.freq}
 					rules={{ required: "Frequency is required" }}
 					data={[
